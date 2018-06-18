@@ -28157,6 +28157,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -29145,162 +29154,201 @@ var render = function() {
         ])
       : _vm._e(),
     _vm._v(" "),
-    _vm.tasks
-      ? _c(
-          "ul",
-          _vm._l(_vm.tasks, function(task) {
-            return _c("li", [
-              _c("strong", [_vm._v("Title: ")]),
-              _vm._v(" " + _vm._s(task.title) + " |\n            "),
-              _c(
-                "button",
-                {
-                  on: {
-                    click: function($event) {
-                      _vm.showTask(task.id)
+    _c("div", { staticClass: "container" }, [
+      _c("div", { staticClass: "row" }, [
+        _c(
+          "div",
+          { staticClass: "col-md-5 media", staticStyle: { width: "100%" } },
+          [
+            _vm.tasks
+              ? _c(
+                  "ul",
+                  { staticClass: "media-body" },
+                  [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-link",
+                        attrs: { type: "button" }
+                      },
+                      [_vm._v("List")]
+                    ),
+                    _vm._v(" | "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-link",
+                        attrs: { type: "button" }
+                      },
+                      [_vm._v("Calendar")]
+                    ),
+                    _vm._v(" "),
+                    _vm._l(_vm.tasks, function(task) {
+                      return _c("li", [
+                        _c("strong", [_vm._v("Title: ")]),
+                        _vm._v(
+                          " " +
+                            _vm._s(task.title) +
+                            " |\n                        "
+                        ),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-sm btn-outline-primary ml-3",
+                            on: {
+                              click: function($event) {
+                                _vm.showTask(task.id)
+                              }
+                            }
+                          },
+                          [_vm._v("Edit")]
+                        )
+                      ])
+                    })
+                  ],
+                  2
+                )
+              : _vm._e()
+          ]
+        ),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-md-5", staticStyle: { width: "100%" } }, [
+          _vm.edit
+            ? _c("div", { staticClass: "editing" }, [
+                _c("div", { staticClass: "form-group" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.task.title,
+                        expression: "task.title"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    domProps: { value: _vm.task.title },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.task, "title", $event.target.value)
+                      }
                     }
-                  }
-                },
-                [_vm._v("Edit")]
-              )
-            ])
-          })
-        )
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.edit
-      ? _c("div", { staticClass: "editing" }, [
-          _c("div", { staticClass: "form-group" }, [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.task.title,
-                  expression: "task.title"
-                }
-              ],
-              staticClass: "form-control",
-              domProps: { value: _vm.task.title },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.$set(_vm.task, "title", $event.target.value)
-                }
-              }
-            }),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _c("textarea", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.task.description,
-                  expression: "task.description"
-                }
-              ],
-              staticClass: "form-control",
-              domProps: { value: _vm.task.description },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.$set(_vm.task, "description", $event.target.value)
-                }
-              }
-            }),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.task.starts_at,
-                  expression: "task.starts_at"
-                }
-              ],
-              staticClass: "form-control",
-              attrs: { type: "datetime-local" },
-              domProps: { value: _vm.task.starts_at },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.$set(_vm.task, "starts_at", $event.target.value)
-                }
-              }
-            }),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.task.ends_at,
-                  expression: "task.ends_at"
-                }
-              ],
-              staticClass: "form-control",
-              attrs: { type: "datetime-local" },
-              domProps: { value: _vm.task.ends_at },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.$set(_vm.task, "ends_at", $event.target.value)
-                }
-              }
-            }),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _vm.save_info != ""
-              ? _c("div", [
-                  _vm._v(
-                    "\n                " +
-                      _vm._s(_vm.save_info) +
-                      "\n            "
+                  }),
+                  _vm._v(" "),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c("textarea", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.task.description,
+                        expression: "task.description"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    domProps: { value: _vm.task.description },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.task, "description", $event.target.value)
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.task.starts_at,
+                        expression: "task.starts_at"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { type: "datetime-local" },
+                    domProps: { value: _vm.task.starts_at },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.task, "starts_at", $event.target.value)
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.task.ends_at,
+                        expression: "task.ends_at"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { type: "datetime-local" },
+                    domProps: { value: _vm.task.ends_at },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.task, "ends_at", $event.target.value)
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("br"),
+                  _vm._v(" "),
+                  _vm.save_info != ""
+                    ? _c("div", [
+                        _vm._v(
+                          "\n                            " +
+                            _vm._s(_vm.save_info) +
+                            "\n                        "
+                        )
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      on: {
+                        click: function($event) {
+                          _vm.updateTask()
+                        }
+                      }
+                    },
+                    [_vm._v("Save")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      on: {
+                        click: function($event) {
+                          _vm.hideTask()
+                        }
+                      }
+                    },
+                    [_vm._v("Close")]
                   )
                 ])
-              : _vm._e(),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                on: {
-                  click: function($event) {
-                    _vm.updateTask()
-                  }
-                }
-              },
-              [_vm._v("Save")]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                on: {
-                  click: function($event) {
-                    _vm.hideTask()
-                  }
-                }
-              },
-              [_vm._v("Close")]
-            )
-          ])
+              ])
+            : _vm._e()
         ])
-      : _vm._e(),
+      ])
+    ]),
     _vm._v(" "),
     _vm.loading
       ? _c("div", { staticClass: "loading" }, [
