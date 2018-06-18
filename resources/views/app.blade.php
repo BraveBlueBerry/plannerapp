@@ -1,6 +1,7 @@
 <html>
 <head>
     <!--<script src="https://cdn.jsdelivr.net/npm/vue"></script>-->
+    <link rel="stylesheet" href="{{ mix('css/app.css') }}" />
 </head>
 <body>
     <div id="app">
