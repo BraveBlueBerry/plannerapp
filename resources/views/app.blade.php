@@ -1,21 +1,12 @@
 <html>
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!--<script src="https://cdn.jsdelivr.net/npm/vue"></script>-->
 </head>
 <body>
     <div id="app">
-        <div v-if="page === 'overview'">
-            @include('overview')
-        </div>
-        <div v-if="page === 'editTask'">
-            @include('editTask')
-        </div>
-        <div v-if="page === 'newTask'">
-            @include('newTask')
-        </div>
+        <app></app>
     </div>
-    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ mix('js/app.js') }}"></script>
 </body>
 </html>
 
