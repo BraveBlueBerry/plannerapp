@@ -1,6 +1,6 @@
 <html>
 <head>
-    <!--<script src="https://cdn.jsdelivr.net/npm/vue"></script>-->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{ mix('css/app.css') }}" />
 </head>
 <body>

@@ -1,11 +1,12 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-Vue.use(VueRouter)
+import App from './views/App'
+import Home from './views/Home'
+import TasksIndex from './views/TasksIndex'
 
-import App from './components/App'
-import Home from './components/Home'
-import TasksIndex from './components/TasksIndex'
+require('./bootstrap');
+Vue.use(VueRouter);
 
 const router = new VueRouter({
     mode: 'history',

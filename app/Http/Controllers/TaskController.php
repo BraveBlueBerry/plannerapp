@@ -48,7 +48,8 @@ class TaskController extends Controller
      */
     public function show($id)
     {
-        //
+        $task = Task::get()->where('id', $id)->first();
+        return response()->json($task);
     }
 
     /**
@@ -71,7 +72,16 @@ class TaskController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        //TODO: Validate postdata
+        
+        $task               = Task::find($id);
+        $task->title        = $request->input('title');
+        $task->description  = $request->input('description');
+        $task->starts_at    = $request->input('starts_at');
+        $task->ends_at      = $request->input('ends_at');
+        $task->save();
+
+        return response()->json(["message"=>"saved the task"], 200);
     }
 
     /**
