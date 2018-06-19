@@ -48,7 +48,7 @@
                         </div>
                     </div>
                     <div class="editing" v-if="edit">
-                        <h2>Edit task: <italic>{{ task.title }}</italic></h2>
+                        <h2>Edit task: <i>{{ task.title }}</i></h2>
                         <div class="form-group">
                             <input class="form-control" v-model="task.title" />
                             <br />
@@ -105,7 +105,7 @@
         },
         methods: {
             fetchData() {
-                this.error = this.tasks = null;
+                this.error = null;
                 this.loading = true;
                 axios
                     .get('/api/tasks')

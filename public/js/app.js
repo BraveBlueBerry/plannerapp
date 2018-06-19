@@ -28226,7 +28226,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         fetchData: function fetchData() {
             var _this = this;
 
-            this.error = this.tasks = null;
+            this.error = null;
             this.loading = true;
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/tasks').then(function (response) {
                 _this.loading = false;
@@ -29440,14 +29440,10 @@ var render = function() {
           _vm._v(" "),
           _vm.edit
             ? _c("div", { staticClass: "editing" }, [
-                _c(
-                  "h2",
-                  [
-                    _vm._v("Edit task: "),
-                    _c("italic", [_vm._v(_vm._s(_vm.task.title))])
-                  ],
-                  1
-                ),
+                _c("h2", [
+                  _vm._v("Edit task: "),
+                  _c("i", [_vm._v(_vm._s(_vm.task.title))])
+                ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "form-group" }, [
                   _c("input", {
