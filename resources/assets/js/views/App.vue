@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>Planner App</h1>
+        <h1 id="appName">Planner App</h1>
         <p>
             <router-link :to="{ name: 'home' }">Home</router-link> |
             <router-link :to="{ name: 'tasks.index' }">Tasks</router-link>
