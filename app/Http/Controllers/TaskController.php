@@ -37,7 +37,14 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $task               = new Task();
+        $task->title        = $request->input('title');
+        $task->description  = $request->input('description');
+        $task->starts_at    = $request->input('starts_at');
+        $task->ends_at      = $request->input('ends_at');
+        $task->save();
+
+        return response()->json(["message"=>"Stored a new task"], 200);
     }
 
     /**
@@ -73,7 +80,7 @@ class TaskController extends Controller
     public function update(Request $request, $id)
     {
         //TODO: Validate postdata
-        
+
         $task               = Task::find($id);
         $task->title        = $request->input('title');
         $task->description  = $request->input('description');

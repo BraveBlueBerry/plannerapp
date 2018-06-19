@@ -20,3 +20,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('/tasks', ['as' => 'indexTasks', 'uses' => 'TaskController@index']);
 Route::get('/task/{id}', ['as' => 'showTask', 'uses' => 'TaskController@show']);
 Route::patch('/task/{id}', ['as' => 'showTask', 'uses' => 'TaskController@update']);
+Route::post('/task', ['as' => 'createTask', 'uses' => 'TaskController@store']);

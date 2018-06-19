@@ -17,13 +17,38 @@
                     <ul v-if="tasks" class="media-body">
                         <button type="button" class="btn btn-link">List</button> | <button type="button" class="btn btn-link">Calendar</button>
                         <li v-for="task in tasks">
-                            <strong>Title: </strong> {{ task.title }} |
+                            <strong>Title: </strong>{{ task.title }} |
                             <button class="btn btn-sm btn-outline-primary ml-3" @click="showTask(task.id)">Edit</button>
                         </li>
                     </ul>
                 </div>
                 <div class="col-md-5" style="width: 100%">
+                    <div class="newTask" v-if="!edit">
+                        <h2>Create a new task</h2>
+                        <div class="form-group">
+                            <input class="form-control" v-model="task.title" placeholder="Title" />
+                            <br />
+                            <textarea class="form-control" v-model="task.description" placeholder="Description"></textarea>
+                            <br />
+                            <input type="datetime-local" class="form-control" v-model="task.starts_at" />
+                            <br />
+                            <input type="datetime-local" class="form-control" v-model="task.ends_at" />
+                            <br />
+                            <div v-if="save_info != ''">
+                                <ul v-html="save_info">
+                                    {{ save_info }}
+                                </ul>
+                            </div>
+                            <div v-if="input_info != ''">
+                                <ul v-html="input_info">
+                                    {{ input_info }}
+                                </ul>
+                            </div>
+                            <button @click="createTask()">Save</button>
+                        </div>
+                    </div>
                     <div class="editing" v-if="edit">
+                        <h2>Edit task: <italic>{{ task.title }}</italic></h2>
                         <div class="form-group">
                             <input class="form-control" v-model="task.title" />
                             <br />
@@ -34,7 +59,14 @@
                             <input type="datetime-local" class="form-control" v-model="task.ends_at" />
                             <br />
                             <div v-if="save_info != ''">
-                                {{ save_info }}
+                                <ul v-html="save_info">
+                                    {{ save_info }}
+                                </ul>
+                            </div>
+                            <div v-if="input_info != ''">
+                                <ul v-html="input_info">
+                                    {{ input_info }}
+                                </ul>
                             </div>
                             <button @click="updateTask()">Save</button>
                             <button @click="hideTask()">Close</button>
@@ -57,6 +89,7 @@
                 tasks: null,
                 error: null,
                 save_info: '',
+                input_info: '',
                 edit: false,
                 task: {
                     id: '',
@@ -103,24 +136,71 @@
             hideTask() {
                 this.save_info = '';
                 this.edit = false;
+                this.task = {
+                    id: '',
+                    title: '',
+                    description: '',
+                    starts_at: '',
+                    ends_at: '',
+                }
             },
 
             updateTask() {
                 //TODO: Validate postdata
-                var temp_starts_at = this.task.starts_at.replace('T', ' ');
-                var temp_ends_at = this.task.ends_at.replace('T', ' ');
+                if(this.task.starts_at > this.task.ends_at) {
+                    this.input_info += "<li>Start date cannot be greater than end date</li>"
+                }
                 console.log(this.task.starts_at);
-                axios
-                    .patch('/api/task/' + this.task.id, {
-                        title: this.task.title,
-                        description: this.task.description,
-                        starts_at: this.task.starts_at,
-                        ends_at: this.task.ends_at,
-                    })
-                    .then(response => {
-                        this.save_info = "Task saved successfully!"
-                    });
+                if(this.input_info == "") {
+                    axios
+                        .patch('/api/task/' + this.task.id, {
+                            title: this.task.title,
+                            description: this.task.description,
+                            starts_at: this.task.starts_at,
+                            ends_at: this.task.ends_at,
+                        })
+                        .then(response => {
+                            this.save_info = "Task saved successfully!"
+                            this.fetchData();
+                        });
+                }
             },
+
+            createTask(){
+                //TODO: validate postdata
+                this.input_info = "";
+                // Checking if everything is filled in
+                if(this.task.title == "") {
+                    this.input_info += "<li>A <b>title</b> is required to make a new task</li>"
+                }
+                if(this.task.description == "") {
+                    this.input_info += "<li>A <b>description</b> is required to make a new task</li>"
+                }
+                if(this.task.starts_at == "") {
+                    this.input_info += "<li>A <b>start date</b> is required to make a new task</li>"
+                }
+                if(this.task.ends_at == "") {
+                    this.input_info += "<li>A <b>end date</b> is required to make a new task</li>"
+                }
+                if(this.task.starts_at > this.task.ends_at) {
+                    this.input_info += "<li>Start date cannot be greater than end date</li>"
+                }
+
+                // Send data if everything is fine
+                if(this.input_info == "") {
+                    axios
+                        .post('/api/task', {
+                            title: this.task.title,
+                            description: this.task.description,
+                            starts_at: this.task.starts_at,
+                            ends_at: this.task.ends_at,
+                        })
+                        .then(response => {
+                            this.save_info = "New task created successfully!"
+                            this.fetchData();
+                        });
+                }
+            }
         }
     }
 </script>

@@ -28166,6 +28166,38 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -28175,6 +28207,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             tasks: null,
             error: null,
             save_info: '',
+            input_info: '',
             edit: false,
             task: {
                 id: '',
@@ -28220,22 +28253,68 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         hideTask: function hideTask() {
             this.save_info = '';
             this.edit = false;
+            this.task = {
+                id: '',
+                title: '',
+                description: '',
+                starts_at: '',
+                ends_at: ''
+            };
         },
         updateTask: function updateTask() {
             var _this3 = this;
 
             //TODO: Validate postdata
-            var temp_starts_at = this.task.starts_at.replace('T', ' ');
-            var temp_ends_at = this.task.ends_at.replace('T', ' ');
+            if (this.task.starts_at > this.task.ends_at) {
+                this.input_info += "<li>Start date cannot be greater than end date</li>";
+            }
             console.log(this.task.starts_at);
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.patch('/api/task/' + this.task.id, {
-                title: this.task.title,
-                description: this.task.description,
-                starts_at: this.task.starts_at,
-                ends_at: this.task.ends_at
-            }).then(function (response) {
-                _this3.save_info = "Task saved successfully!";
-            });
+            if (this.input_info == "") {
+                __WEBPACK_IMPORTED_MODULE_0_axios___default.a.patch('/api/task/' + this.task.id, {
+                    title: this.task.title,
+                    description: this.task.description,
+                    starts_at: this.task.starts_at,
+                    ends_at: this.task.ends_at
+                }).then(function (response) {
+                    _this3.save_info = "Task saved successfully!";
+                    _this3.fetchData();
+                });
+            }
+        },
+        createTask: function createTask() {
+            var _this4 = this;
+
+            //TODO: validate postdata
+            this.input_info = "";
+            // Checking if everything is filled in
+            if (this.task.title == "") {
+                this.input_info += "<li>A <b>title</b> is required to make a new task</li>";
+            }
+            if (this.task.description == "") {
+                this.input_info += "<li>A <b>description</b> is required to make a new task</li>";
+            }
+            if (this.task.starts_at == "") {
+                this.input_info += "<li>A <b>start date</b> is required to make a new task</li>";
+            }
+            if (this.task.ends_at == "") {
+                this.input_info += "<li>A <b>end date</b> is required to make a new task</li>";
+            }
+            if (this.task.starts_at > this.task.ends_at) {
+                this.input_info += "<li>Start date cannot be greater than end date</li>";
+            }
+
+            // Send data if everything is fine
+            if (this.input_info == "") {
+                __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/task', {
+                    title: this.task.title,
+                    description: this.task.description,
+                    starts_at: this.task.starts_at,
+                    ends_at: this.task.ends_at
+                }).then(function (response) {
+                    _this4.save_info = "New task created successfully!";
+                    _this4.fetchData();
+                });
+            }
         }
     }
 });
@@ -29187,9 +29266,7 @@ var render = function() {
                       return _c("li", [
                         _c("strong", [_vm._v("Title: ")]),
                         _vm._v(
-                          " " +
-                            _vm._s(task.title) +
-                            " |\n                        "
+                          _vm._s(task.title) + " |\n                        "
                         ),
                         _c(
                           "button",
@@ -29213,8 +29290,165 @@ var render = function() {
         ),
         _vm._v(" "),
         _c("div", { staticClass: "col-md-5", staticStyle: { width: "100%" } }, [
+          !_vm.edit
+            ? _c("div", { staticClass: "newTask" }, [
+                _c("h2", [_vm._v("Create a new task")]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.task.title,
+                        expression: "task.title"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { placeholder: "Title" },
+                    domProps: { value: _vm.task.title },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.task, "title", $event.target.value)
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c("textarea", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.task.description,
+                        expression: "task.description"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { placeholder: "Description" },
+                    domProps: { value: _vm.task.description },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.task, "description", $event.target.value)
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.task.starts_at,
+                        expression: "task.starts_at"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { type: "datetime-local" },
+                    domProps: { value: _vm.task.starts_at },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.task, "starts_at", $event.target.value)
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.task.ends_at,
+                        expression: "task.ends_at"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { type: "datetime-local" },
+                    domProps: { value: _vm.task.ends_at },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.task, "ends_at", $event.target.value)
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("br"),
+                  _vm._v(" "),
+                  _vm.save_info != ""
+                    ? _c("div", [
+                        _c(
+                          "ul",
+                          { domProps: { innerHTML: _vm._s(_vm.save_info) } },
+                          [
+                            _vm._v(
+                              "\n                                " +
+                                _vm._s(_vm.save_info) +
+                                "\n                            "
+                            )
+                          ]
+                        )
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.input_info != ""
+                    ? _c("div", [
+                        _c(
+                          "ul",
+                          { domProps: { innerHTML: _vm._s(_vm.input_info) } },
+                          [
+                            _vm._v(
+                              "\n                                " +
+                                _vm._s(_vm.input_info) +
+                                "\n                            "
+                            )
+                          ]
+                        )
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      on: {
+                        click: function($event) {
+                          _vm.createTask()
+                        }
+                      }
+                    },
+                    [_vm._v("Save")]
+                  )
+                ])
+              ])
+            : _vm._e(),
+          _vm._v(" "),
           _vm.edit
             ? _c("div", { staticClass: "editing" }, [
+                _c(
+                  "h2",
+                  [
+                    _vm._v("Edit task: "),
+                    _c("italic", [_vm._v(_vm._s(_vm.task.title))])
+                  ],
+                  1
+                ),
+                _vm._v(" "),
                 _c("div", { staticClass: "form-group" }, [
                   _c("input", {
                     directives: [
@@ -29312,10 +29546,32 @@ var render = function() {
                   _vm._v(" "),
                   _vm.save_info != ""
                     ? _c("div", [
-                        _vm._v(
-                          "\n                            " +
-                            _vm._s(_vm.save_info) +
-                            "\n                        "
+                        _c(
+                          "ul",
+                          { domProps: { innerHTML: _vm._s(_vm.save_info) } },
+                          [
+                            _vm._v(
+                              "\n                                " +
+                                _vm._s(_vm.save_info) +
+                                "\n                            "
+                            )
+                          ]
+                        )
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.input_info != ""
+                    ? _c("div", [
+                        _c(
+                          "ul",
+                          { domProps: { innerHTML: _vm._s(_vm.input_info) } },
+                          [
+                            _vm._v(
+                              "\n                                " +
+                                _vm._s(_vm.input_info) +
+                                "\n                            "
+                            )
+                          ]
                         )
                       ])
                     : _vm._e(),
