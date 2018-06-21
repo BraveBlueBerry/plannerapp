@@ -1,6 +1,6 @@
 <template>
     <div class="tasks">
-
+        <!-- Show if there's an error -->
         <div v-if="error" class="error">
             <p>
                 {{ error }}
@@ -14,6 +14,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-5 media" style="width: 100%">
+                    <!-- Show if there are tasks in the array -->
                     <ul v-if="tasks" class="media-body">
                         <button type="button" class="btn btn-link">List</button> | <button type="button" class="btn btn-link">Calendar</button>
                         <li v-for="task in tasks">
@@ -23,6 +24,7 @@
                     </ul>
                 </div>
                 <div class="col-md-5" style="width: 100%">
+                    <!-- Show if the user has no task selected to edit or show -->
                     <div class="newTask" v-if="!edit">
                         <h2>Create a new task</h2>
                         <div class="form-group">
@@ -47,6 +49,7 @@
                             <button @click="createTask()">Save</button>
                         </div>
                     </div>
+                    <!-- Show if the user has selected a task to edit or show -->
                     <div class="editing" v-if="edit">
                         <h2>Edit task: <i>{{ task.title }}</i></h2>
                         <div class="form-group">
@@ -63,6 +66,7 @@
                                     {{ save_info }}
                                 </ul>
                             </div>
+                            <!-- Any conflicting info about the task the user wants to safe -->
                             <div v-if="input_info != ''">
                                 <ul v-html="input_info">
                                     {{ input_info }}
