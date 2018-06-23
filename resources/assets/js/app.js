@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+import axios from 'axios';
 import App from './views/App'
 import Home from './views/Home'
 import TasksIndex from './views/TasksIndex'
+
 
 require('./bootstrap');
 Vue.use(VueRouter);

@@ -13994,12 +13994,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue_router__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__views_App__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__views_App___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__views_App__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__views_Home__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__views_Home___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__views_Home__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__views_TasksIndex__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__views_TasksIndex___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__views_TasksIndex__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_axios__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_axios__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__views_App__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__views_App___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__views_App__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__views_Home__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__views_Home___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__views_Home__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__views_TasksIndex__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__views_TasksIndex___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__views_TasksIndex__);
+
 
 
 
@@ -14015,17 +14018,17 @@ var router = new __WEBPACK_IMPORTED_MODULE_1_vue_router__["a" /* default */]({
     routes: [{
         path: '/',
         name: 'home',
-        component: __WEBPACK_IMPORTED_MODULE_3__views_Home___default.a
+        component: __WEBPACK_IMPORTED_MODULE_4__views_Home___default.a
     }, {
         path: '/tasks',
         name: 'tasks.index',
-        component: __WEBPACK_IMPORTED_MODULE_4__views_TasksIndex___default.a
+        component: __WEBPACK_IMPORTED_MODULE_5__views_TasksIndex___default.a
     }]
 });
 
 var app = new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
     el: '#app',
-    components: { App: __WEBPACK_IMPORTED_MODULE_2__views_App___default.a },
+    components: { App: __WEBPACK_IMPORTED_MODULE_3__views_App___default.a },
     router: router
 });
 
@@ -28114,8 +28117,11 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
+//
+//
+//
+//
+//
 //
 //
 //
@@ -28218,8 +28224,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 title: '',
                 description: '',
                 starts_at: '',
-                ends_at: ''
-            }
+                ends_at: '',
+                attachment: null
+            },
+            files: []
         };
     },
     created: function created() {
@@ -28232,7 +28240,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.error = null;
             this.loading = true;
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/tasks').then(function (response) {
+            axios.get('/api/tasks').then(function (response) {
                 _this.loading = false;
                 _this.tasks = response.data;
             }).catch(function (error) {
@@ -28244,10 +28252,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this2 = this;
 
             this.save_info = '';
+            this.loading = true;
             this.edit = true;
             this.task.id = id;
-            this.loading = true;
-            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/task/' + this.task.id).then(function (response) {
+            axios.get('/api/task/' + this.task.id).then(function (response) {
                 response.data.starts_at = response.data.starts_at.replace(' ', 'T');
                 response.data.ends_at = response.data.ends_at.replace(' ', 'T');
                 _this2.task = response.data;
@@ -28262,24 +28270,41 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 title: '',
                 description: '',
                 starts_at: '',
-                ends_at: ''
+                ends_at: '',
+                attachment: null
             };
         },
         updateTask: function updateTask() {
             var _this3 = this;
 
             //TODO: Validate postdata
+            this.input_info = "";
+            // Checking if everything is filled in
+            if (this.task.title == "") {
+                this.input_info += "<li>A <b>title</b> is required</li>";
+            }
+            if (this.task.description == "") {
+                this.input_info += "<li>A <b>description</b> is required</li>";
+            }
+            if (this.task.starts_at == "") {
+                this.input_info += "<li>A <b>start date</b> is required</li>";
+            }
+            if (this.task.ends_at == "") {
+                this.input_info += "<li>A <b>end date</b> is required</li>";
+            }
             if (this.task.starts_at > this.task.ends_at) {
                 this.input_info += "<li>Start date cannot be greater than end date</li>";
             }
-            console.log(this.task.starts_at);
+
+            // Send data if everything is fine
             if (this.input_info == "") {
-                __WEBPACK_IMPORTED_MODULE_0_axios___default.a.patch('/api/task/' + this.task.id, {
-                    title: this.task.title,
-                    description: this.task.description,
-                    starts_at: this.task.starts_at,
-                    ends_at: this.task.ends_at
-                }).then(function (response) {
+                var formData = new FormData();
+                formData.append('title', this.task.title);
+                formData.append('description', this.task.description);
+                formData.append('starts_at', this.task.starts_at);
+                formData.append('ends_at', this.task.ends_at);
+                formData.append('attachment', this.task.attachment, this.task.attachment.name);
+                axios.patch('/api/task/' + this.task.id, formData).then(function (response) {
                     _this3.save_info = "Task saved successfully!";
                     _this3.fetchData();
                 });
@@ -28288,6 +28313,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         createTask: function createTask() {
             var _this4 = this;
 
+            console.log(this.task.attachment);
             //TODO: validate postdata
             this.input_info = "";
             // Checking if everything is filled in
@@ -28309,16 +28335,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             // Send data if everything is fine
             if (this.input_info == "") {
-                __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/task', {
-                    title: this.task.title,
-                    description: this.task.description,
-                    starts_at: this.task.starts_at,
-                    ends_at: this.task.ends_at
-                }).then(function (response) {
+                var formData = new FormData();
+                formData.append('title', this.task.title);
+                formData.append('description', this.task.description);
+                formData.append('starts_at', this.task.starts_at);
+                formData.append('ends_at', this.task.ends_at);
+                formData.append('attachment', this.task.attachment, this.task.attachment.name);
+                axios.post('/api/task', formData).then(function (response) {
                     _this4.save_info = "New task created successfully!";
                     _this4.fetchData();
                 });
             }
+        },
+        previewFile: function previewFile() {
+
+            this.task.attachment = this.$refs.fileToUpload.files[0];
+
+            console.log(this.task.attachment);
         }
     }
 });
@@ -29395,6 +29428,15 @@ var render = function() {
                   _vm._v(" "),
                   _c("br"),
                   _vm._v(" "),
+                  _c("input", {
+                    ref: "fileToUpload",
+                    staticClass: "form-control",
+                    attrs: { type: "file" },
+                    on: { change: _vm.previewFile }
+                  }),
+                  _vm._v(" "),
+                  _c("br"),
+                  _vm._v(" "),
                   _vm.save_info != ""
                     ? _c("div", [
                         _c(
@@ -29540,6 +29582,25 @@ var render = function() {
                         _vm.$set(_vm.task, "ends_at", $event.target.value)
                       }
                     }
+                  }),
+                  _vm._v(" "),
+                  _c("br"),
+                  _vm._v(" "),
+                  _vm.task.attachment
+                    ? _c("img", {
+                        attrs: {
+                          width: "100",
+                          height: "100",
+                          src: _vm.task.attachment
+                        }
+                      })
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _c("input", {
+                    ref: "fileToUpload",
+                    staticClass: "form-control",
+                    attrs: { type: "file" },
+                    on: { change: _vm.previewFile }
                   }),
                   _vm._v(" "),
                   _c("br"),

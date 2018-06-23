@@ -11,5 +11,6 @@ class Task extends Model
         'description',
         'starts_at',
         'ends_at',
+        'attachment',
     ];
 }

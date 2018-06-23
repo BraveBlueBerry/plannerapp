@@ -36,6 +36,8 @@
                             <br />
                             <input type="datetime-local" class="form-control" v-model="task.ends_at" />
                             <br />
+                            <input type="file" class="form-control" ref="fileToUpload" v-on:change="previewFile" />
+                            <br />
                             <div v-if="save_info != ''">
                                 <ul v-html="save_info">
                                     {{ save_info }}
@@ -61,6 +63,9 @@
                             <br />
                             <input type="datetime-local" class="form-control" v-model="task.ends_at" />
                             <br />
+                            <img v-if="task.attachment" width="100" height="100":src=task.attachment />
+                            <input type="file" class="form-control" ref="fileToUpload" v-on:change="previewFile" />
+                            <br />
                             <div v-if="save_info != ''">
                                 <ul v-html="save_info">
                                     {{ save_info }}
@@ -85,7 +90,7 @@
     </div>
 </template>
 <script>
-    import axios from 'axios';
+
     export default {
         data() {
             return {
@@ -101,7 +106,9 @@
                     description: '',
                     starts_at: '',
                     ends_at: '',
-                }
+                    attachment: null,
+                },
+                files: [],
             };
         },
         created() {
@@ -124,9 +131,9 @@
 
             showTask(id) {
                 this.save_info = '';
+                this.loading = true;
                 this.edit = true;
                 this.task.id = id;
-                this.loading = true;
                 axios
                     .get('/api/task/' + this.task.id)
                     .then(response => {
@@ -146,23 +153,40 @@
                     description: '',
                     starts_at: '',
                     ends_at: '',
+                    attachment: null,
                 }
             },
 
             updateTask() {
                 //TODO: Validate postdata
+                this.input_info = "";
+                // Checking if everything is filled in
+                if(this.task.title == "") {
+                    this.input_info += "<li>A <b>title</b> is required</li>"
+                }
+                if(this.task.description == "") {
+                    this.input_info += "<li>A <b>description</b> is required</li>"
+                }
+                if(this.task.starts_at == "") {
+                    this.input_info += "<li>A <b>start date</b> is required</li>"
+                }
+                if(this.task.ends_at == "") {
+                    this.input_info += "<li>A <b>end date</b> is required</li>"
+                }
                 if(this.task.starts_at > this.task.ends_at) {
                     this.input_info += "<li>Start date cannot be greater than end date</li>"
                 }
-                console.log(this.task.starts_at);
+
+                // Send data if everything is fine
                 if(this.input_info == "") {
+                    const formData = new FormData();
+                    formData.append('title', this.task.title);
+                    formData.append('description', this.task.description);
+                    formData.append('starts_at', this.task.starts_at);
+                    formData.append('ends_at', this.task.ends_at);
+                    formData.append('attachment', this.task.attachment, this.task.attachment.name);
                     axios
-                        .patch('/api/task/' + this.task.id, {
-                            title: this.task.title,
-                            description: this.task.description,
-                            starts_at: this.task.starts_at,
-                            ends_at: this.task.ends_at,
-                        })
+                        .patch('/api/task/' + this.task.id, formData)
                         .then(response => {
                             this.save_info = "Task saved successfully!"
                             this.fetchData();
@@ -170,7 +194,8 @@
                 }
             },
 
-            createTask(){
+            createTask() {
+                console.log(this.task.attachment);
                 //TODO: validate postdata
                 this.input_info = "";
                 // Checking if everything is filled in
@@ -192,18 +217,26 @@
 
                 // Send data if everything is fine
                 if(this.input_info == "") {
+                    const formData = new FormData();
+                    formData.append('title', this.task.title);
+                    formData.append('description', this.task.description);
+                    formData.append('starts_at', this.task.starts_at);
+                    formData.append('ends_at', this.task.ends_at);
+                    formData.append('attachment', this.task.attachment, this.task.attachment.name);
                     axios
-                        .post('/api/task', {
-                            title: this.task.title,
-                            description: this.task.description,
-                            starts_at: this.task.starts_at,
-                            ends_at: this.task.ends_at,
-                        })
+                        .post('/api/task', formData)
                         .then(response => {
                             this.save_info = "New task created successfully!"
                             this.fetchData();
                         });
                 }
+            },
+
+            previewFile() {
+
+                this.task.attachment = this.$refs.fileToUpload.files[0];
+
+                console.log(this.task.attachment);
             }
         }
     }
