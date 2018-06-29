@@ -11,6 +11,6 @@
 |
 */
 
-Route::get('/{anything}', function () {
+Route::get('{anything}', function () {
     return view('app');
-});
+})->where('anything', '.*');

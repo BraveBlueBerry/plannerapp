@@ -63,7 +63,12 @@
                             <br />
                             <input type="datetime-local" class="form-control" v-model="task.ends_at" />
                             <br />
-                            <img v-if="task.attachment" width="100" height="100":src=task.attachment />
+                            <div v-if="imageData.length == 0">
+                                <img v-if="task.attachment" width="100" height="100":src=task.attachment />
+                            </div>
+                            <div v-if="imageData.length > 0">
+                                <img width="100" height="100":src=imageData />
+                            </div>
                             <input type="file" class="form-control" ref="fileToUpload" v-on:change="previewFile" />
                             <br />
                             <div v-if="save_info != ''">
@@ -101,6 +106,7 @@
                 save_info: '',
                 input_info: '',
                 edit: false,
+                imageData: "",
                 task: {
                     id: '',
                     title: '',
@@ -131,6 +137,7 @@
             },
 
             showTask(id) {
+                this.imageData = "";
                 this.save_info = '';
                 this.loading = true;
                 this.edit = true;
@@ -231,9 +238,19 @@
                         });
                 }
             },
-
-            previewFile() {
+            // Source code https://jsfiddle.net/mani04/5zyozvx8/
+            previewFile(event) {
                 this.task.attachment = this.$refs.fileToUpload.files[0];
+
+                var input = event.target;
+
+                if(input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.imageData = e.target.result;
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
             }
         }
     }

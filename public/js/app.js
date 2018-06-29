@@ -28207,6 +28207,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -28219,6 +28224,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             save_info: '',
             input_info: '',
             edit: false,
+            imageData: "",
             task: {
                 id: '',
                 title: '',
@@ -28251,6 +28257,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         showTask: function showTask(id) {
             var _this2 = this;
 
+            this.imageData = "";
             this.save_info = '';
             this.loading = true;
             this.edit = true;
@@ -28347,8 +28354,22 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 });
             }
         },
-        previewFile: function previewFile() {
+
+        // Source code https://jsfiddle.net/mani04/5zyozvx8/
+        previewFile: function previewFile(event) {
+            var _this5 = this;
+
             this.task.attachment = this.$refs.fileToUpload.files[0];
+
+            var input = event.target;
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    _this5.imageData = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
         }
     }
 });
@@ -29583,14 +29604,30 @@ var render = function() {
                   _vm._v(" "),
                   _c("br"),
                   _vm._v(" "),
-                  _vm.task.attachment
-                    ? _c("img", {
-                        attrs: {
-                          width: "100",
-                          height: "100",
-                          src: _vm.task.attachment
-                        }
-                      })
+                  _vm.imageData.length == 0
+                    ? _c("div", [
+                        _vm.task.attachment
+                          ? _c("img", {
+                              attrs: {
+                                width: "100",
+                                height: "100",
+                                src: _vm.task.attachment
+                              }
+                            })
+                          : _vm._e()
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.imageData.length > 0
+                    ? _c("div", [
+                        _c("img", {
+                          attrs: {
+                            width: "100",
+                            height: "100",
+                            src: _vm.imageData
+                          }
+                        })
+                      ])
                     : _vm._e(),
                   _vm._v(" "),
                   _c("input", {
