@@ -13994,15 +13994,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue_router__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_axios__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_axios__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__views_App__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__views_App___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__views_App__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__views_Home__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__views_Home___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__views_Home__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__views_TasksIndex__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__views_TasksIndex___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__views_TasksIndex__);
-
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__views_App__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__views_App___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__views_App__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__views_Home__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__views_Home___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__views_Home__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__views_TasksIndex__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__views_TasksIndex___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__views_TasksIndex__);
 
 
 
@@ -14018,17 +14015,17 @@ var router = new __WEBPACK_IMPORTED_MODULE_1_vue_router__["a" /* default */]({
     routes: [{
         path: '/',
         name: 'home',
-        component: __WEBPACK_IMPORTED_MODULE_4__views_Home___default.a
+        component: __WEBPACK_IMPORTED_MODULE_3__views_Home___default.a
     }, {
         path: '/tasks',
         name: 'tasks.index',
-        component: __WEBPACK_IMPORTED_MODULE_5__views_TasksIndex___default.a
+        component: __WEBPACK_IMPORTED_MODULE_4__views_TasksIndex___default.a
     }]
 });
 
 var app = new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
     el: '#app',
-    components: { App: __WEBPACK_IMPORTED_MODULE_3__views_App___default.a },
+    components: { App: __WEBPACK_IMPORTED_MODULE_2__views_App___default.a },
     router: router
 });
 
@@ -28117,6 +28114,8 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 //
 //
 //
@@ -28208,6 +28207,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -28240,7 +28240,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.error = null;
             this.loading = true;
-            axios.get('/api/tasks').then(function (response) {
+            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/tasks').then(function (response) {
                 _this.loading = false;
                 _this.tasks = response.data;
             }).catch(function (error) {
@@ -28255,7 +28255,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.loading = true;
             this.edit = true;
             this.task.id = id;
-            axios.get('/api/task/' + this.task.id).then(function (response) {
+            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/task/' + this.task.id).then(function (response) {
                 response.data.starts_at = response.data.starts_at.replace(' ', 'T');
                 response.data.ends_at = response.data.ends_at.replace(' ', 'T');
                 _this2.task = response.data;
@@ -28299,12 +28299,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             // Send data if everything is fine
             if (this.input_info == "") {
                 var formData = new FormData();
-                formData.append('title', this.task.title);
-                formData.append('description', this.task.description);
-                formData.append('starts_at', this.task.starts_at);
-                formData.append('ends_at', this.task.ends_at);
+                formData.set('title', this.task.title);
+                formData.set('description', this.task.description);
+                formData.set('starts_at', this.task.starts_at);
+                formData.set('ends_at', this.task.ends_at);
+                formData.set('_method', 'PATCH');
                 formData.append('attachment', this.task.attachment, this.task.attachment.name);
-                axios.patch('/api/task/' + this.task.id, formData).then(function (response) {
+                __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/task/' + this.task.id, formData).then(function (response) {
                     _this3.save_info = "Task saved successfully!";
                     _this3.fetchData();
                 });
@@ -28313,7 +28314,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         createTask: function createTask() {
             var _this4 = this;
 
-            console.log(this.task.attachment);
             //TODO: validate postdata
             this.input_info = "";
             // Checking if everything is filled in
@@ -28341,17 +28341,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 formData.append('starts_at', this.task.starts_at);
                 formData.append('ends_at', this.task.ends_at);
                 formData.append('attachment', this.task.attachment, this.task.attachment.name);
-                axios.post('/api/task', formData).then(function (response) {
+                __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/task', formData).then(function (response) {
                     _this4.save_info = "New task created successfully!";
                     _this4.fetchData();
                 });
             }
         },
         previewFile: function previewFile() {
-
             this.task.attachment = this.$refs.fileToUpload.files[0];
-
-            console.log(this.task.attachment);
         }
     }
 });

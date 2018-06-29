@@ -73,7 +73,6 @@ class TaskController extends Controller
     public function update(Request $request, $id)
     {
         //TODO: Validate postdata
-
         $task               = Task::find($id);
         $task->title        = $request->input('title');
         $task->description  = $request->input('description');

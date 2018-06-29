@@ -90,6 +90,7 @@
     </div>
 </template>
 <script>
+    import axios from 'axios'
 
     export default {
         data() {
@@ -180,13 +181,13 @@
                 // Send data if everything is fine
                 if(this.input_info == "") {
                     const formData = new FormData();
-                    formData.append('title', this.task.title);
-                    formData.append('description', this.task.description);
-                    formData.append('starts_at', this.task.starts_at);
-                    formData.append('ends_at', this.task.ends_at);
+                    formData.set('title', this.task.title);
+                    formData.set('description', this.task.description);
+                    formData.set('starts_at', this.task.starts_at);
+                    formData.set('ends_at', this.task.ends_at);
+                    formData.set('_method', 'PATCH');
                     formData.append('attachment', this.task.attachment, this.task.attachment.name);
-                    axios
-                        .patch('/api/task/' + this.task.id, formData)
+                    axios.post('/api/task/' + this.task.id, formData)
                         .then(response => {
                             this.save_info = "Task saved successfully!"
                             this.fetchData();
@@ -195,7 +196,6 @@
             },
 
             createTask() {
-                console.log(this.task.attachment);
                 //TODO: validate postdata
                 this.input_info = "";
                 // Checking if everything is filled in
@@ -233,10 +233,7 @@
             },
 
             previewFile() {
-
                 this.task.attachment = this.$refs.fileToUpload.files[0];
-
-                console.log(this.task.attachment);
             }
         }
     }
