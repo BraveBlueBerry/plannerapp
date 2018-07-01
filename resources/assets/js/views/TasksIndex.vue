@@ -36,6 +36,9 @@
                             <br />
                             <input type="datetime-local" class="form-control" v-model="task.ends_at" />
                             <br />
+                            <div v-if="imageData.length > 0">
+                                <img width="200px" :src=imageData />
+                            </div>
                             <input type="file" class="form-control" ref="fileToUpload" v-on:change="previewFile" />
                             <br />
                             <div v-if="save_info != ''">
@@ -63,11 +66,14 @@
                             <br />
                             <input type="datetime-local" class="form-control" v-model="task.ends_at" />
                             <br />
+                            <!-- <span class="downloadLink" @click="downloadAttachment"></span> -->
+                            <h5 v-if="task.attachment"><b>Download:</b><a :href="task.attachment" download>{{ attachmentName }}</a></h5>
                             <div v-if="imageData.length == 0">
-                                <img v-if="task.attachment" width="200px" :src=task.attachment />
+                                <img v-if="task.attachment && isImage" width="200px" :src=task.attachment />
+                                <img v-else width="200px" src="storage/No_Image_Available.png"  />
                             </div>
                             <div v-if="imageData.length > 0">
-                                <img width="200px":src=imageData />
+                                <img width="200px" :src=imageData />
                             </div>
                             <input type="file" class="form-control" ref="fileToUpload" v-on:change="previewFile" />
                             <br />
@@ -107,6 +113,7 @@
                 input_info: '',
                 edit: false,
                 imageData: "",
+                isImage: true,
                 task: {
                     id: '',
                     title: '',
@@ -116,6 +123,8 @@
                     attachment: null,
                 },
                 files: [],
+                imageTypes:["bmp", "gif", "jpe", "jpeg", "jpg", "svg", "png"],
+                attachmentName: "",
             };
         },
         created() {
@@ -137,11 +146,12 @@
             },
 
             showTask(id) {
-                this.imageData = "";
+                this.imageData = '';
                 this.save_info = '';
                 this.loading = true;
                 this.edit = true;
                 this.task.id = id;
+                this.isImage = false;
                 axios
                     .get('/api/task/' + this.task.id)
                     .then(response => {
@@ -149,6 +159,13 @@
                         response.data.ends_at = response.data.ends_at.replace(' ', 'T');
                         this.task = response.data;
                         this.loading = false;
+                        let fileSplitted = this.task.attachment.split('.').join('/').split('/');
+                        this.attachmentName = fileSplitted[fileSplitted.length-2];
+                        this.attachmentName = this.attachmentName.split('_').splice(1).join("_");
+                        let fileExt = fileSplitted[fileSplitted.length-1];
+                        if(this.imageTypes.indexOf(fileExt) != -1) {
+                            this.isImage = true;
+                        }
                     });
             },
 
@@ -243,15 +260,18 @@
                 this.task.attachment = this.$refs.fileToUpload.files[0];
 
                 var input = event.target;
-
-                if(input.files && input.files[0]) {
-                    var reader = new FileReader();
-                    reader.onload = (e) => {
-                        this.imageData = e.target.result;
+                if((/image*/.test(input.files[0].type))) {
+                    if(input.files && input.files[0]) {
+                        var reader = new FileReader();
+                        reader.onload = (e) => {
+                            this.imageData = e.target.result;
+                        }
+                        reader.readAsDataURL(input.files[0]);
                     }
-                    reader.readAsDataURL(input.files[0]);
+                } else {
+                    this.imageData = "storage/No_Image_Available.png";
                 }
-            }
+            },
         }
     }
 </script>

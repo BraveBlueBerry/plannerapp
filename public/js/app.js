@@ -28212,6 +28212,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
@@ -28225,6 +28231,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             input_info: '',
             edit: false,
             imageData: "",
+            isImage: true,
             task: {
                 id: '',
                 title: '',
@@ -28233,7 +28240,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 ends_at: '',
                 attachment: null
             },
-            files: []
+            files: [],
+            imageTypes: ["bmp", "gif", "jpe", "jpeg", "jpg", "svg", "png"],
+            attachmentName: ""
         };
     },
     created: function created() {
@@ -28257,16 +28266,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         showTask: function showTask(id) {
             var _this2 = this;
 
-            this.imageData = "";
+            this.imageData = '';
             this.save_info = '';
             this.loading = true;
             this.edit = true;
             this.task.id = id;
+            this.isImage = false;
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/task/' + this.task.id).then(function (response) {
                 response.data.starts_at = response.data.starts_at.replace(' ', 'T');
                 response.data.ends_at = response.data.ends_at.replace(' ', 'T');
                 _this2.task = response.data;
                 _this2.loading = false;
+                var fileSplitted = _this2.task.attachment.split('.').join('/').split('/');
+                _this2.attachmentName = fileSplitted[fileSplitted.length - 2];
+                _this2.attachmentName = _this2.attachmentName.split('_').splice(1).join("_");
+                var fileExt = fileSplitted[fileSplitted.length - 1];
+                if (_this2.imageTypes.indexOf(fileExt) != -1) {
+                    _this2.isImage = true;
+                }
             });
         },
         hideTask: function hideTask() {
@@ -28362,13 +28379,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.task.attachment = this.$refs.fileToUpload.files[0];
 
             var input = event.target;
-
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    _this5.imageData = e.target.result;
-                };
-                reader.readAsDataURL(input.files[0]);
+            if (/image*/.test(input.files[0].type)) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        _this5.imageData = e.target.result;
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            } else {
+                this.imageData = "storage/No_Image_Available.png";
             }
         }
     }
@@ -29446,6 +29466,14 @@ var render = function() {
                   _vm._v(" "),
                   _c("br"),
                   _vm._v(" "),
+                  _vm.imageData.length > 0
+                    ? _c("div", [
+                        _c("img", {
+                          attrs: { width: "200px", src: _vm.imageData }
+                        })
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
                   _c("input", {
                     ref: "fileToUpload",
                     staticClass: "form-control",
@@ -29604,16 +29632,34 @@ var render = function() {
                   _vm._v(" "),
                   _c("br"),
                   _vm._v(" "),
+                  _vm.task.attachment
+                    ? _c("h5", [
+                        _c("b", [_vm._v("Download:")]),
+                        _c(
+                          "a",
+                          {
+                            attrs: { href: _vm.task.attachment, download: "" }
+                          },
+                          [_vm._v(_vm._s(_vm.attachmentName))]
+                        )
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
                   _vm.imageData.length == 0
                     ? _c("div", [
-                        _vm.task.attachment
+                        _vm.task.attachment && _vm.isImage
                           ? _c("img", {
                               attrs: {
                                 width: "200px",
                                 src: _vm.task.attachment
                               }
                             })
-                          : _vm._e()
+                          : _c("img", {
+                              attrs: {
+                                width: "200px",
+                                src: "storage/No_Image_Available.png"
+                              }
+                            })
                       ])
                     : _vm._e(),
                   _vm._v(" "),
