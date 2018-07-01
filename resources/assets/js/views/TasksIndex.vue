@@ -64,10 +64,10 @@
                             <input type="datetime-local" class="form-control" v-model="task.ends_at" />
                             <br />
                             <div v-if="imageData.length == 0">
-                                <img v-if="task.attachment" width="100" height="100":src=task.attachment />
+                                <img v-if="task.attachment" width="200px" :src=task.attachment />
                             </div>
                             <div v-if="imageData.length > 0">
-                                <img width="100" height="100":src=imageData />
+                                <img width="200px":src=imageData />
                             </div>
                             <input type="file" class="form-control" ref="fileToUpload" v-on:change="previewFile" />
                             <br />

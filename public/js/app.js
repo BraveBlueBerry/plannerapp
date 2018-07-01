@@ -29609,8 +29609,7 @@ var render = function() {
                         _vm.task.attachment
                           ? _c("img", {
                               attrs: {
-                                width: "100",
-                                height: "100",
+                                width: "200px",
                                 src: _vm.task.attachment
                               }
                             })
@@ -29621,11 +29620,7 @@ var render = function() {
                   _vm.imageData.length > 0
                     ? _c("div", [
                         _c("img", {
-                          attrs: {
-                            width: "100",
-                            height: "100",
-                            src: _vm.imageData
-                          }
+                          attrs: { width: "200px", src: _vm.imageData }
                         })
                       ])
                     : _vm._e(),
