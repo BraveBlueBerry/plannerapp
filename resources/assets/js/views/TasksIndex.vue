@@ -8,7 +8,8 @@
                         <button type="button" class="btn btn-link">List</button> | <button type="button" class="btn btn-link">Calendar</button>
                         <li v-for="task in tasks">
                             <strong>Title: </strong>{{ task.title }} |
-                            <button class="btn btn-sm btn-outline-primary ml-3" @click="showTask(task.id)">Edit</button>
+                            <button class="btn btn-sm btn-outline-primary ml-3" @click="showTask(task.id)">Edit</button> |
+                            <button class="btn btn-sm btn-outline-danger ml-3" @click="deleteTask(task.id, task.title)">Delete</button>
                         </li>
                     </ul>
                 </div>
@@ -261,7 +262,22 @@
                         });
                 }
             },
+
+            // Delete the task selected by the user
+            deleteTask(id, taskTitle) {
+                axios
+                    .delete('/api/task/' + id, {data: { id: id}})
+                    .then(response => {
+                        this.deleteInfo = "Task " + taskTitle +  " deleted";
+                        this.fetchData();
+                    }).catch(error => {
+                        this.loading = false;
+                        this.error = error.response.data.message || error.message;
+                    });
+            },
+
             // Source code https://jsfiddle.net/mani04/5zyozvx8/
+            // Preview an image when the uploaded file is an image
             previewFile(event) {
                 this.task.attachment = this.$refs.fileToUpload.files[0];
 

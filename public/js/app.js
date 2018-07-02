@@ -28218,6 +28218,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 
 
@@ -28226,9 +28228,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         return {
             loading: false,
             tasks: null,
-            error: null,
-            save_info: '',
-            input_info: '',
+            error: '',
+            saveInfo: '',
+            inputInfo: '',
+            deleteInfo: '',
             edit: false,
             imageData: "",
             isImage: true,
@@ -28253,7 +28256,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         fetchData: function fetchData() {
             var _this = this;
 
-            this.error = null;
+            this.error = '';
             this.loading = true;
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/tasks').then(function (response) {
                 _this.loading = false;
@@ -28263,11 +28266,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this.error = error.response.data.message || error.message;
             });
         },
+
+
+        // Show the task the user wants to edit or see
         showTask: function showTask(id) {
             var _this2 = this;
 
             this.imageData = '';
-            this.save_info = '';
+            this.saveInfo = '';
             this.loading = true;
             this.edit = true;
             this.task.id = id;
@@ -28286,8 +28292,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 }
             });
         },
+
+
+        // Close the task and show the create new task
         hideTask: function hideTask() {
-            this.save_info = '';
+            this.saveInfo = '';
             this.edit = false;
             this.task = {
                 id: '',
@@ -28298,30 +28307,33 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 attachment: null
             };
         },
+
+
+        // Save the edited task
         updateTask: function updateTask() {
             var _this3 = this;
 
             //TODO: Validate postdata
-            this.input_info = "";
+            this.inputInfo = "";
             // Checking if everything is filled in
             if (this.task.title == "") {
-                this.input_info += "<li>A <b>title</b> is required</li>";
+                this.inputInfo += "<li>A <b>title</b> is required</li>";
             }
             if (this.task.description == "") {
-                this.input_info += "<li>A <b>description</b> is required</li>";
+                this.inputInfo += "<li>A <b>description</b> is required</li>";
             }
             if (this.task.starts_at == "") {
-                this.input_info += "<li>A <b>start date</b> is required</li>";
+                this.inputInfo += "<li>A <b>start date</b> is required</li>";
             }
             if (this.task.ends_at == "") {
-                this.input_info += "<li>A <b>end date</b> is required</li>";
+                this.inputInfo += "<li>A <b>end date</b> is required</li>";
             }
             if (this.task.starts_at > this.task.ends_at) {
-                this.input_info += "<li>Start date cannot be greater than end date</li>";
+                this.inputInfo += "<li>Start date cannot be greater than end date</li>";
             }
 
             // Send data if everything is fine
-            if (this.input_info == "") {
+            if (this.inputInfo == "") {
                 var formData = new FormData();
                 formData.set('title', this.task.title);
                 formData.set('description', this.task.description);
@@ -28330,35 +28342,38 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 formData.set('_method', 'PATCH');
                 formData.append('attachment', this.task.attachment, this.task.attachment.name);
                 __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/task/' + this.task.id, formData).then(function (response) {
-                    _this3.save_info = "Task saved successfully!";
+                    _this3.saveInfo = "Task saved successfully!";
                     _this3.fetchData();
                 });
             }
         },
+
+
+        // Save a new created task
         createTask: function createTask() {
             var _this4 = this;
 
             //TODO: validate postdata
-            this.input_info = "";
+            this.inputInfo = "";
             // Checking if everything is filled in
             if (this.task.title == "") {
-                this.input_info += "<li>A <b>title</b> is required to make a new task</li>";
+                this.inputInfo += "<li>A <b>title</b> is required to make a new task</li>";
             }
             if (this.task.description == "") {
-                this.input_info += "<li>A <b>description</b> is required to make a new task</li>";
+                this.inputInfo += "<li>A <b>description</b> is required to make a new task</li>";
             }
             if (this.task.starts_at == "") {
-                this.input_info += "<li>A <b>start date</b> is required to make a new task</li>";
+                this.inputInfo += "<li>A <b>start date</b> is required to make a new task</li>";
             }
             if (this.task.ends_at == "") {
-                this.input_info += "<li>A <b>end date</b> is required to make a new task</li>";
+                this.inputInfo += "<li>A <b>end date</b> is required to make a new task</li>";
             }
             if (this.task.starts_at > this.task.ends_at) {
-                this.input_info += "<li>Start date cannot be greater than end date</li>";
+                this.inputInfo += "<li>Start date cannot be greater than end date</li>";
             }
 
             // Send data if everything is fine
-            if (this.input_info == "") {
+            if (this.inputInfo == "") {
                 var formData = new FormData();
                 formData.append('title', this.task.title);
                 formData.append('description', this.task.description);
@@ -28366,15 +28381,31 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 formData.append('ends_at', this.task.ends_at);
                 formData.append('attachment', this.task.attachment, this.task.attachment.name);
                 __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/task', formData).then(function (response) {
-                    _this4.save_info = "New task created successfully!";
+                    _this4.saveInfo = "New task created successfully!";
                     _this4.fetchData();
                 });
             }
         },
 
-        // Source code https://jsfiddle.net/mani04/5zyozvx8/
-        previewFile: function previewFile(event) {
+
+        // Delete the task selected by the user
+        deleteTask: function deleteTask(id, taskTitle) {
             var _this5 = this;
+
+            __WEBPACK_IMPORTED_MODULE_0_axios___default.a.delete('/api/task/' + id, { data: { id: id } }).then(function (response) {
+                _this5.deleteInfo = "Task " + taskTitle + " deleted";
+                _this5.fetchData();
+            }).catch(function (error) {
+                _this5.loading = false;
+                _this5.error = error.response.data.message || error.message;
+            });
+        },
+
+
+        // Source code https://jsfiddle.net/mani04/5zyozvx8/
+        // Preview an image when the uploaded file is an image
+        previewFile: function previewFile(event) {
+            var _this6 = this;
 
             this.task.attachment = this.$refs.fileToUpload.files[0];
 
@@ -28383,7 +28414,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 if (input.files && input.files[0]) {
                     var reader = new FileReader();
                     reader.onload = function (e) {
-                        _this5.imageData = e.target.result;
+                        _this6.imageData = e.target.result;
                     };
                     reader.readAsDataURL(input.files[0]);
                 }
@@ -29285,29 +29316,6 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "tasks" }, [
-    _vm.error
-      ? _c("div", { staticClass: "error" }, [
-          _c("p", [
-            _vm._v("\n            " + _vm._s(_vm.error) + "\n        ")
-          ]),
-          _vm._v(" "),
-          _c("p", [
-            _c(
-              "button",
-              {
-                on: {
-                  click: function($event) {
-                    $event.preventDefault()
-                    return _vm.fetchData($event)
-                  }
-                }
-              },
-              [_vm._v("\n                Try Again\n            ")]
-            )
-          ])
-        ])
-      : _vm._e(),
-    _vm._v(" "),
     _c("div", { staticClass: "container" }, [
       _c("div", { staticClass: "row" }, [
         _c(
@@ -29354,6 +29362,19 @@ var render = function() {
                             }
                           },
                           [_vm._v("Edit")]
+                        ),
+                        _vm._v(" |\n                        "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-sm btn-outline-danger ml-3",
+                            on: {
+                              click: function($event) {
+                                _vm.deleteTask(task.id, task.title)
+                              }
+                            }
+                          },
+                          [_vm._v("Delete")]
                         )
                       ])
                     })
@@ -29482,38 +29503,6 @@ var render = function() {
                   }),
                   _vm._v(" "),
                   _c("br"),
-                  _vm._v(" "),
-                  _vm.save_info != ""
-                    ? _c("div", [
-                        _c(
-                          "ul",
-                          { domProps: { innerHTML: _vm._s(_vm.save_info) } },
-                          [
-                            _vm._v(
-                              "\n                                " +
-                                _vm._s(_vm.save_info) +
-                                "\n                            "
-                            )
-                          ]
-                        )
-                      ])
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _vm.input_info != ""
-                    ? _c("div", [
-                        _c(
-                          "ul",
-                          { domProps: { innerHTML: _vm._s(_vm.input_info) } },
-                          [
-                            _vm._v(
-                              "\n                                " +
-                                _vm._s(_vm.input_info) +
-                                "\n                            "
-                            )
-                          ]
-                        )
-                      ])
-                    : _vm._e(),
                   _vm._v(" "),
                   _c(
                     "button",
@@ -29680,38 +29669,6 @@ var render = function() {
                   _vm._v(" "),
                   _c("br"),
                   _vm._v(" "),
-                  _vm.save_info != ""
-                    ? _c("div", [
-                        _c(
-                          "ul",
-                          { domProps: { innerHTML: _vm._s(_vm.save_info) } },
-                          [
-                            _vm._v(
-                              "\n                                " +
-                                _vm._s(_vm.save_info) +
-                                "\n                            "
-                            )
-                          ]
-                        )
-                      ])
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _vm.input_info != ""
-                    ? _c("div", [
-                        _c(
-                          "ul",
-                          { domProps: { innerHTML: _vm._s(_vm.input_info) } },
-                          [
-                            _vm._v(
-                              "\n                                " +
-                                _vm._s(_vm.input_info) +
-                                "\n                            "
-                            )
-                          ]
-                        )
-                      ])
-                    : _vm._e(),
-                  _vm._v(" "),
                   _c(
                     "button",
                     {
@@ -29746,10 +29703,161 @@ var render = function() {
       ? _c("div", { staticClass: "loading" }, [
           _vm._v("\n        Loading..\n    ")
         ])
-      : _vm._e()
+      : _vm._e(),
+    _vm._v(" "),
+    _c("div", { staticClass: "container fixed-bottom" }, [
+      _c("div", { staticClass: "float-right" }, [
+        _vm.inputInfo != ""
+          ? _c(
+              "div",
+              {
+                staticClass: "alert alert-info alert-dismissible fade show",
+                attrs: { role: "alert" }
+              },
+              [
+                _c("ul", { domProps: { innerHTML: _vm._s(_vm.inputInfo) } }, [
+                  _vm._v(
+                    "\n                    " +
+                      _vm._s(_vm.inputInfo) +
+                      "\n                "
+                  )
+                ]),
+                _vm._v(" "),
+                _vm._m(0)
+              ]
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.saveInfo != ""
+          ? _c(
+              "div",
+              {
+                staticClass: "alert alert-success alert-dismissible fade show",
+                attrs: { role: "alert" }
+              },
+              [
+                _c("ul", { domProps: { innerHTML: _vm._s(_vm.saveInfo) } }, [
+                  _vm._v(
+                    "\n                        " +
+                      _vm._s(_vm.saveInfo) +
+                      "\n                    "
+                  )
+                ]),
+                _vm._v(" "),
+                _vm._m(1)
+              ]
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.deleteInfo != ""
+          ? _c(
+              "div",
+              {
+                staticClass: "alert alert-warning alert-dismissible fade show",
+                attrs: { role: "alert" }
+              },
+              [
+                _vm._v(
+                  "\n                " +
+                    _vm._s(_vm.deleteInfo) +
+                    "\n                "
+                ),
+                _vm._m(2)
+              ]
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.error != ""
+          ? _c(
+              "div",
+              {
+                staticClass: "alert alert-danger alert-dismissible fade show",
+                attrs: { role: "alert" }
+              },
+              [
+                _vm._v(
+                  "\n                " +
+                    _vm._s(_vm.error) +
+                    "\n                "
+                ),
+                _vm._m(3)
+              ]
+            )
+          : _vm._e()
+      ])
+    ])
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "alert",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "alert",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "alert",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "alert",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
+  }
+]
 render._withStripped = true
 module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
