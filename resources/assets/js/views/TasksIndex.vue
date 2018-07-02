@@ -1,16 +1,5 @@
 <template>
     <div class="tasks">
-        <!-- Show if there's an error -->
-        <div v-if="error" class="error">
-            <p>
-                {{ error }}
-            </p>
-            <p>
-                <button @click.prevent="fetchData">
-                    Try Again
-                </button>
-            </p>
-        </div>
         <div class="container">
             <div class="row">
                 <div class="col-md-5 media" style="width: 100%">
@@ -41,16 +30,6 @@
                             </div>
                             <input type="file" class="form-control" ref="fileToUpload" v-on:change="previewFile" />
                             <br />
-                            <div v-if="save_info != ''">
-                                <ul v-html="save_info">
-                                    {{ save_info }}
-                                </ul>
-                            </div>
-                            <div v-if="input_info != ''">
-                                <ul v-html="input_info">
-                                    {{ input_info }}
-                                </ul>
-                            </div>
                             <button @click="createTask()">Save</button>
                         </div>
                     </div>
@@ -77,17 +56,6 @@
                             </div>
                             <input type="file" class="form-control" ref="fileToUpload" v-on:change="previewFile" />
                             <br />
-                            <div v-if="save_info != ''">
-                                <ul v-html="save_info">
-                                    {{ save_info }}
-                                </ul>
-                            </div>
-                            <!-- Any conflicting info about the task the user wants to safe -->
-                            <div v-if="input_info != ''">
-                                <ul v-html="input_info">
-                                    {{ input_info }}
-                                </ul>
-                            </div>
                             <button @click="updateTask()">Save</button>
                             <button @click="hideTask()">Close</button>
                         </div>
@@ -97,6 +65,39 @@
         </div>
         <div class="loading" v-if="loading">
             Loading..
+        </div>
+        <!-- Information boxes -->
+        <div class="container fixed-bottom">
+            <div class="float-right">
+                <div v-if="inputInfo != ''" class="alert alert-info alert-dismissible fade show" role="alert">
+                    <ul v-html="inputInfo">
+                        {{ inputInfo }}
+                    </ul>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div v-if="saveInfo != ''" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <ul v-html="saveInfo">
+                            {{ saveInfo }}
+                        </ul>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div v-if="deleteInfo != ''" class="alert alert-warning alert-dismissible fade show" role="alert">
+                    {{ deleteInfo }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div v-if="error != ''" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ error }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -108,9 +109,10 @@
             return {
                 loading: false,
                 tasks: null,
-                error: null,
-                save_info: '',
-                input_info: '',
+                error: '',
+                saveInfo: '',
+                inputInfo: '',
+                deleteInfo: '',
                 edit: false,
                 imageData: "",
                 isImage: true,
@@ -132,7 +134,7 @@
         },
         methods: {
             fetchData() {
-                this.error = null;
+                this.error = '';
                 this.loading = true;
                 axios
                     .get('/api/tasks')
@@ -145,9 +147,10 @@
                     });
             },
 
+            // Show the task the user wants to edit or see
             showTask(id) {
                 this.imageData = '';
-                this.save_info = '';
+                this.saveInfo = '';
                 this.loading = true;
                 this.edit = true;
                 this.task.id = id;
@@ -169,8 +172,9 @@
                     });
             },
 
+            // Close the task and show the create new task
             hideTask() {
-                this.save_info = '';
+                this.saveInfo = '';
                 this.edit = false;
                 this.task = {
                     id: '',
@@ -182,28 +186,29 @@
                 }
             },
 
+            // Save the edited task
             updateTask() {
                 //TODO: Validate postdata
-                this.input_info = "";
+                this.inputInfo = "";
                 // Checking if everything is filled in
                 if(this.task.title == "") {
-                    this.input_info += "<li>A <b>title</b> is required</li>"
+                    this.inputInfo += "<li>A <b>title</b> is required</li>"
                 }
                 if(this.task.description == "") {
-                    this.input_info += "<li>A <b>description</b> is required</li>"
+                    this.inputInfo += "<li>A <b>description</b> is required</li>"
                 }
                 if(this.task.starts_at == "") {
-                    this.input_info += "<li>A <b>start date</b> is required</li>"
+                    this.inputInfo += "<li>A <b>start date</b> is required</li>"
                 }
                 if(this.task.ends_at == "") {
-                    this.input_info += "<li>A <b>end date</b> is required</li>"
+                    this.inputInfo += "<li>A <b>end date</b> is required</li>"
                 }
                 if(this.task.starts_at > this.task.ends_at) {
-                    this.input_info += "<li>Start date cannot be greater than end date</li>"
+                    this.inputInfo += "<li>Start date cannot be greater than end date</li>"
                 }
 
                 // Send data if everything is fine
-                if(this.input_info == "") {
+                if(this.inputInfo == "") {
                     const formData = new FormData();
                     formData.set('title', this.task.title);
                     formData.set('description', this.task.description);
@@ -213,34 +218,35 @@
                     formData.append('attachment', this.task.attachment, this.task.attachment.name);
                     axios.post('/api/task/' + this.task.id, formData)
                         .then(response => {
-                            this.save_info = "Task saved successfully!"
+                            this.saveInfo = "Task saved successfully!"
                             this.fetchData();
                         });
                 }
             },
 
+            // Save a new created task
             createTask() {
                 //TODO: validate postdata
-                this.input_info = "";
+                this.inputInfo = "";
                 // Checking if everything is filled in
                 if(this.task.title == "") {
-                    this.input_info += "<li>A <b>title</b> is required to make a new task</li>"
+                    this.inputInfo += "<li>A <b>title</b> is required to make a new task</li>"
                 }
                 if(this.task.description == "") {
-                    this.input_info += "<li>A <b>description</b> is required to make a new task</li>"
+                    this.inputInfo += "<li>A <b>description</b> is required to make a new task</li>"
                 }
                 if(this.task.starts_at == "") {
-                    this.input_info += "<li>A <b>start date</b> is required to make a new task</li>"
+                    this.inputInfo += "<li>A <b>start date</b> is required to make a new task</li>"
                 }
                 if(this.task.ends_at == "") {
-                    this.input_info += "<li>A <b>end date</b> is required to make a new task</li>"
+                    this.inputInfo += "<li>A <b>end date</b> is required to make a new task</li>"
                 }
                 if(this.task.starts_at > this.task.ends_at) {
-                    this.input_info += "<li>Start date cannot be greater than end date</li>"
+                    this.inputInfo += "<li>Start date cannot be greater than end date</li>"
                 }
 
                 // Send data if everything is fine
-                if(this.input_info == "") {
+                if(this.inputInfo == "") {
                     const formData = new FormData();
                     formData.append('title', this.task.title);
                     formData.append('description', this.task.description);
@@ -250,7 +256,7 @@
                     axios
                         .post('/api/task', formData)
                         .then(response => {
-                            this.save_info = "New task created successfully!"
+                            this.saveInfo = "New task created successfully!"
                             this.fetchData();
                         });
                 }
