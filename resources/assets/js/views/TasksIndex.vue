@@ -71,30 +71,26 @@
         <div class="container fixed-bottom">
             <div class="float-right">
                 <div v-if="inputInfo != ''" class="alert alert-info alert-dismissible fade show" role="alert">
-                    <ul v-html="inputInfo">
-                        {{ inputInfo }}
-                    </ul>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <ul v-html="inputInfo"></ul>
+                    <button type="button" class="close" v-on:click="inputInfo = ''" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div v-if="saveInfo != ''" class="alert alert-success alert-dismissible fade show" role="alert">
-                        <ul v-html="saveInfo">
-                            {{ saveInfo }}
-                        </ul>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <ul v-html="saveInfo"></ul>
+                    <button type="button" class="close" v-on:click="saveInfo = ''" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div v-if="deleteInfo != ''" class="alert alert-warning alert-dismissible fade show" role="alert">
                     {{ deleteInfo }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <button type="button" class="close" v-on:click="deleteInfo = ''" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div v-if="error != ''" class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ error }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <ul v-html="error"></ul>
+                    <button type="button" class="close" v-on:click="error = ''" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -170,7 +166,10 @@
                         if(this.imageTypes.indexOf(fileExt) != -1) {
                             this.isImage = true;
                         }
-                    });
+                    }).catch(error => {
+                    this.loading = false;
+                    this.displayError(error);
+                });
             },
 
             // Close the task and show the create new task
@@ -190,23 +189,7 @@
             // Save the edited task
             updateTask() {
                 //TODO: Validate postdata
-                this.inputInfo = "";
-                // Checking if everything is filled in
-                if(this.task.title == "") {
-                    this.inputInfo += "<li>A <b>title</b> is required</li>"
-                }
-                if(this.task.description == "") {
-                    this.inputInfo += "<li>A <b>description</b> is required</li>"
-                }
-                if(this.task.starts_at == "") {
-                    this.inputInfo += "<li>A <b>start date</b> is required</li>"
-                }
-                if(this.task.ends_at == "") {
-                    this.inputInfo += "<li>A <b>end date</b> is required</li>"
-                }
-                if(this.task.starts_at > this.task.ends_at) {
-                    this.inputInfo += "<li>Start date cannot be greater than end date</li>"
-                }
+                this.validateInput();
 
                 // Send data if everything is fine
                 if(this.inputInfo == "") {
@@ -221,30 +204,17 @@
                         .then(response => {
                             this.saveInfo = "Task saved successfully!"
                             this.fetchData();
-                        });
+                        }).catch(error => {
+                        this.loading = false;
+                        this.displayError(error);
+                    });
                 }
             },
 
             // Save a new created task
             createTask() {
                 //TODO: validate postdata
-                this.inputInfo = "";
-                // Checking if everything is filled in
-                if(this.task.title == "") {
-                    this.inputInfo += "<li>A <b>title</b> is required to make a new task</li>"
-                }
-                if(this.task.description == "") {
-                    this.inputInfo += "<li>A <b>description</b> is required to make a new task</li>"
-                }
-                if(this.task.starts_at == "") {
-                    this.inputInfo += "<li>A <b>start date</b> is required to make a new task</li>"
-                }
-                if(this.task.ends_at == "") {
-                    this.inputInfo += "<li>A <b>end date</b> is required to make a new task</li>"
-                }
-                if(this.task.starts_at > this.task.ends_at) {
-                    this.inputInfo += "<li>Start date cannot be greater than end date</li>"
-                }
+                this.validateInput();
 
                 // Send data if everything is fine
                 if(this.inputInfo == "") {
@@ -253,12 +223,17 @@
                     formData.append('description', this.task.description);
                     formData.append('starts_at', this.task.starts_at);
                     formData.append('ends_at', this.task.ends_at);
-                    formData.append('attachment', this.task.attachment, this.task.attachment.name);
+                    if(this.task.attachment != null) {
+                        formData.append('attachment', this.task.attachment, this.task.attachment.name);
+                    }
                     axios
                         .post('/api/task', formData)
                         .then(response => {
                             this.saveInfo = "New task created successfully!"
                             this.fetchData();
+                        }).catch(error => {
+                            this.loading = false;
+                            this.displayError(error);
                         });
                 }
             },
@@ -272,7 +247,7 @@
                         this.fetchData();
                     }).catch(error => {
                         this.loading = false;
-                        this.error = error.response.data.message || error.message;
+                        this.displayError(error);
                     });
             },
 
@@ -292,6 +267,39 @@
                     }
                 } else {
                     this.imageData = "storage/No_Image_Available.png";
+                }
+            },
+
+            // Takes an axios error object and sets error HTML in the data.error property.
+            displayError(error) {
+                let message = error.response.data.message || error.message;
+                    message = "<li style='list-style:none;'><strong>" + message + "</strong></li>";
+                if (typeof error.response.data.errors != 'undefined') {
+                    for (var i = 0; i < error.response.data.errors.length; i++) {
+                        message += "<li>" + error.response.data.errors[i] + "</li>";
+                    }
+                }
+                this.error = message;
+            },
+
+
+            validateInput() {
+                this.inputInfo = "";
+                // Checking if everything is filled in
+                if(this.task.title == "") {
+                    this.inputInfo += "<li>A <b>title</b> is required to make a new task</li>"
+                }
+                if(this.task.description == "") {
+                    this.inputInfo += "<li>A <b>description</b> is required to make a new task</li>"
+                }
+                if(this.task.starts_at == "") {
+                    this.inputInfo += "<li>A <b>start date</b> is required to make a new task</li>"
+                }
+                if(this.task.ends_at == "") {
+                    this.inputInfo += "<li>A <b>end date</b> is required to make a new task</li>"
+                }
+                if(this.task.starts_at > this.task.ends_at) {
+                    this.inputInfo += "<li>Start date must be before end date</li>"
                 }
             },
         }

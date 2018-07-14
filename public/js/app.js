@@ -28216,10 +28216,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
 
 
 
@@ -28290,6 +28286,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 if (_this2.imageTypes.indexOf(fileExt) != -1) {
                     _this2.isImage = true;
                 }
+            }).catch(function (error) {
+                _this2.loading = false;
+                _this2.displayError(error);
             });
         },
 
@@ -28314,23 +28313,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this3 = this;
 
             //TODO: Validate postdata
-            this.inputInfo = "";
-            // Checking if everything is filled in
-            if (this.task.title == "") {
-                this.inputInfo += "<li>A <b>title</b> is required</li>";
-            }
-            if (this.task.description == "") {
-                this.inputInfo += "<li>A <b>description</b> is required</li>";
-            }
-            if (this.task.starts_at == "") {
-                this.inputInfo += "<li>A <b>start date</b> is required</li>";
-            }
-            if (this.task.ends_at == "") {
-                this.inputInfo += "<li>A <b>end date</b> is required</li>";
-            }
-            if (this.task.starts_at > this.task.ends_at) {
-                this.inputInfo += "<li>Start date cannot be greater than end date</li>";
-            }
+            this.validateInput();
 
             // Send data if everything is fine
             if (this.inputInfo == "") {
@@ -28344,6 +28327,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/task/' + this.task.id, formData).then(function (response) {
                     _this3.saveInfo = "Task saved successfully!";
                     _this3.fetchData();
+                }).catch(function (error) {
+                    _this3.loading = false;
+                    _this3.displayError(error);
                 });
             }
         },
@@ -28354,23 +28340,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this4 = this;
 
             //TODO: validate postdata
-            this.inputInfo = "";
-            // Checking if everything is filled in
-            if (this.task.title == "") {
-                this.inputInfo += "<li>A <b>title</b> is required to make a new task</li>";
-            }
-            if (this.task.description == "") {
-                this.inputInfo += "<li>A <b>description</b> is required to make a new task</li>";
-            }
-            if (this.task.starts_at == "") {
-                this.inputInfo += "<li>A <b>start date</b> is required to make a new task</li>";
-            }
-            if (this.task.ends_at == "") {
-                this.inputInfo += "<li>A <b>end date</b> is required to make a new task</li>";
-            }
-            if (this.task.starts_at > this.task.ends_at) {
-                this.inputInfo += "<li>Start date cannot be greater than end date</li>";
-            }
+            this.validateInput();
 
             // Send data if everything is fine
             if (this.inputInfo == "") {
@@ -28379,10 +28349,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 formData.append('description', this.task.description);
                 formData.append('starts_at', this.task.starts_at);
                 formData.append('ends_at', this.task.ends_at);
-                formData.append('attachment', this.task.attachment, this.task.attachment.name);
+                if (this.task.attachment != null) {
+                    formData.append('attachment', this.task.attachment, this.task.attachment.name);
+                }
                 __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/task', formData).then(function (response) {
                     _this4.saveInfo = "New task created successfully!";
                     _this4.fetchData();
+                }).catch(function (error) {
+                    _this4.loading = false;
+                    _this4.displayError(error);
                 });
             }
         },
@@ -28397,7 +28372,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this5.fetchData();
             }).catch(function (error) {
                 _this5.loading = false;
-                _this5.error = error.response.data.message || error.message;
+                _this5.displayError(error);
             });
         },
 
@@ -28420,6 +28395,38 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 }
             } else {
                 this.imageData = "storage/No_Image_Available.png";
+            }
+        },
+
+
+        // Takes an axios error object and sets error HTML in the data.error property.
+        displayError: function displayError(error) {
+            var message = error.response.data.message || error.message;
+            message = "<li style='list-style:none;'><strong>" + message + "</strong></li>";
+            if (typeof error.response.data.errors != 'undefined') {
+                for (var i = 0; i < error.response.data.errors.length; i++) {
+                    message += "<li>" + error.response.data.errors[i] + "</li>";
+                }
+            }
+            this.error = message;
+        },
+        validateInput: function validateInput() {
+            this.inputInfo = "";
+            // Checking if everything is filled in
+            if (this.task.title == "") {
+                this.inputInfo += "<li>A <b>title</b> is required to make a new task</li>";
+            }
+            if (this.task.description == "") {
+                this.inputInfo += "<li>A <b>description</b> is required to make a new task</li>";
+            }
+            if (this.task.starts_at == "") {
+                this.inputInfo += "<li>A <b>start date</b> is required to make a new task</li>";
+            }
+            if (this.task.ends_at == "") {
+                this.inputInfo += "<li>A <b>end date</b> is required to make a new task</li>";
+            }
+            if (this.task.starts_at > this.task.ends_at) {
+                this.inputInfo += "<li>Start date must be before end date</li>";
             }
         }
     }
@@ -29715,15 +29722,25 @@ var render = function() {
                 attrs: { role: "alert" }
               },
               [
-                _c("ul", { domProps: { innerHTML: _vm._s(_vm.inputInfo) } }, [
-                  _vm._v(
-                    "\n                    " +
-                      _vm._s(_vm.inputInfo) +
-                      "\n                "
-                  )
-                ]),
+                _c("ul", { domProps: { innerHTML: _vm._s(_vm.inputInfo) } }),
                 _vm._v(" "),
-                _vm._m(0)
+                _c(
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: { type: "button", "aria-label": "Close" },
+                    on: {
+                      click: function($event) {
+                        _vm.inputInfo = ""
+                      }
+                    }
+                  },
+                  [
+                    _c("span", { attrs: { "aria-hidden": "true" } }, [
+                      _vm._v("×")
+                    ])
+                  ]
+                )
               ]
             )
           : _vm._e(),
@@ -29736,15 +29753,25 @@ var render = function() {
                 attrs: { role: "alert" }
               },
               [
-                _c("ul", { domProps: { innerHTML: _vm._s(_vm.saveInfo) } }, [
-                  _vm._v(
-                    "\n                        " +
-                      _vm._s(_vm.saveInfo) +
-                      "\n                    "
-                  )
-                ]),
+                _c("ul", { domProps: { innerHTML: _vm._s(_vm.saveInfo) } }),
                 _vm._v(" "),
-                _vm._m(1)
+                _c(
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: { type: "button", "aria-label": "Close" },
+                    on: {
+                      click: function($event) {
+                        _vm.saveInfo = ""
+                      }
+                    }
+                  },
+                  [
+                    _c("span", { attrs: { "aria-hidden": "true" } }, [
+                      _vm._v("×")
+                    ])
+                  ]
+                )
               ]
             )
           : _vm._e(),
@@ -29762,7 +29789,23 @@ var render = function() {
                     _vm._s(_vm.deleteInfo) +
                     "\n                "
                 ),
-                _vm._m(2)
+                _c(
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: { type: "button", "aria-label": "Close" },
+                    on: {
+                      click: function($event) {
+                        _vm.deleteInfo = ""
+                      }
+                    }
+                  },
+                  [
+                    _c("span", { attrs: { "aria-hidden": "true" } }, [
+                      _vm._v("×")
+                    ])
+                  ]
+                )
               ]
             )
           : _vm._e(),
@@ -29775,12 +29818,25 @@ var render = function() {
                 attrs: { role: "alert" }
               },
               [
-                _vm._v(
-                  "\n                " +
-                    _vm._s(_vm.error) +
-                    "\n                "
-                ),
-                _vm._m(3)
+                _c("ul", { domProps: { innerHTML: _vm._s(_vm.error) } }),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: { type: "button", "aria-label": "Close" },
+                    on: {
+                      click: function($event) {
+                        _vm.error = ""
+                      }
+                    }
+                  },
+                  [
+                    _c("span", { attrs: { "aria-hidden": "true" } }, [
+                      _vm._v("×")
+                    ])
+                  ]
+                )
               ]
             )
           : _vm._e()
@@ -29788,76 +29844,7 @@ var render = function() {
     ])
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "button",
-      {
-        staticClass: "close",
-        attrs: {
-          type: "button",
-          "data-dismiss": "alert",
-          "aria-label": "Close"
-        }
-      },
-      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "button",
-      {
-        staticClass: "close",
-        attrs: {
-          type: "button",
-          "data-dismiss": "alert",
-          "aria-label": "Close"
-        }
-      },
-      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "button",
-      {
-        staticClass: "close",
-        attrs: {
-          type: "button",
-          "data-dismiss": "alert",
-          "aria-label": "Close"
-        }
-      },
-      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "button",
-      {
-        staticClass: "close",
-        attrs: {
-          type: "button",
-          "data-dismiss": "alert",
-          "aria-label": "Close"
-        }
-      },
-      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
-    )
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
