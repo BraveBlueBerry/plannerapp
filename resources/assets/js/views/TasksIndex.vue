@@ -22,6 +22,16 @@
                             <br />
                             <textarea class="form-control" v-model="task.description" placeholder="Description"></textarea>
                             <br />
+                            <select v-model="date.day">
+                                <option v-bind:value="day" v-for="day in days">{{ day }}</option>
+                            </select>
+                            <select v-model="date.month" v-on:change="changeMonth">
+                                <option v-bind:value="month.id" v-for="month in months">{{ month.name }}</option>
+                            </select>
+                            <select v-model="date.year">
+                                <option v-bind:value="year" v-for="year in years">{{ year }}</option>
+                            </select>
+                            <br />
                             <input type="datetime-local" class="form-control" v-model="task.starts_at" />
                             <br />
                             <input type="datetime-local" class="form-control" v-model="task.ends_at" />
@@ -128,13 +138,66 @@
                 files: [],
                 imageTypes:["bmp", "gif", "jpe", "jpeg", "jpg", "svg", "png"],
                 attachmentName: "",
+                date: {
+                    day: null,
+                    month: null,
+                    year: null,
+                },
+                days: [],
+                months: [
+                    {id:1, name:'January'},
+                    {id:2, name:'February'},
+                    {id:3, name:'March'},
+                    {id:4, name:'April'},
+                    {id:5, name:'May'},
+                    {id:6, name:'June'},
+                    {id:7, name:'July'},
+                    {id:8, name:'August'},
+                    {id:9, name:'September'},
+                    {id:10, name:'October'},
+                    {id:11, name:'November'},
+                    {id:12, name:'December'},
+                ],
+                years: [],
             };
         },
         created() {
             this.fetchData();
         },
         methods: {
+            changeMonth() {
+                this.days = [];
+                let amount = 0;
+                if((this.date.month % 2 == 0 && this.date.month < 8) || (this.date.month % 2 == 1 && this.date.month > 7)){
+                    amount = 30;
+                }
+                if((this.date.month % 2 == 0 && this.date.month > 7) || (this.date.month % 2 == 1 && this.date.month < 8)){
+                    amount = 31;
+                }
+                if(this.date.month==2){
+                    //if is schrikkeljaar
+                    amount = 28;
+                    //if is not
+                    amount = 27
+                }
+                for(let i = 1; i <= amount; i++) {
+                    this.days.push(i);
+                }
+            },
+
+            fillYears() {
+                for(let i = this.date.year; i < (this.date.year + 5); i++) {
+                    this.years.push(i);
+                }
+            },
+
             fetchData() {
+                let d = new Date();
+                this.date.day = d.getDate();
+                this.date.month = this.months[d.getMonth()].id;
+                this.date.year = d.getFullYear();
+                this.changeMonth();
+                this.fillYears();
                 this.error = '';
                 this.loading = true;
                 axios
@@ -294,6 +357,7 @@
                     this.imageData = "storage/No_Image_Available.png";
                 }
             },
+
         }
     }
 </script>

@@ -27914,7 +27914,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\views\\App.vue"
+Component.options.__file = "resources/assets/js/views/App.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -27923,9 +27923,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-7cca96b8", Component.options)
+    hotAPI.createRecord("data-v-50e73d1e", Component.options)
   } else {
-    hotAPI.reload("data-v-7cca96b8", Component.options)
+    hotAPI.reload("data-v-50e73d1e", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -27990,7 +27990,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-7cca96b8", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-50e73d1e", module.exports)
   }
 }
 
@@ -28020,7 +28020,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\views\\Home.vue"
+Component.options.__file = "resources/assets/js/views/Home.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -28029,9 +28029,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-11c5acec", Component.options)
+    hotAPI.createRecord("data-v-6c0a33b2", Component.options)
   } else {
-    hotAPI.reload("data-v-11c5acec", Component.options)
+    hotAPI.reload("data-v-6c0a33b2", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -28057,7 +28057,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-11c5acec", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-6c0a33b2", module.exports)
   }
 }
 
@@ -28087,7 +28087,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\views\\TasksIndex.vue"
+Component.options.__file = "resources/assets/js/views/TasksIndex.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -28096,9 +28096,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-039527b1", Component.options)
+    hotAPI.createRecord("data-v-07ef01f7", Component.options)
   } else {
-    hotAPI.reload("data-v-039527b1", Component.options)
+    hotAPI.reload("data-v-07ef01f7", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -28116,6 +28116,16 @@ module.exports = Component.exports
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -28245,7 +28255,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             },
             files: [],
             imageTypes: ["bmp", "gif", "jpe", "jpeg", "jpg", "svg", "png"],
-            attachmentName: ""
+            attachmentName: "",
+            date: {
+                day: null,
+                month: null,
+                year: null
+            },
+            days: [],
+            months: [{ id: 1, name: 'January' }, { id: 2, name: 'February' }, { id: 3, name: 'March' }, { id: 4, name: 'April' }, { id: 5, name: 'May' }, { id: 6, name: 'June' }, { id: 7, name: 'July' }, { id: 8, name: 'August' }, { id: 9, name: 'September' }, { id: 10, name: 'October' }, { id: 11, name: 'November' }, { id: 12, name: 'December' }],
+            years: []
         };
     },
     created: function created() {
@@ -28253,9 +28271,39 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
     methods: {
+        changeMonth: function changeMonth() {
+            this.days = [];
+            var amount = 0;
+            if (this.date.month % 2 == 0 && this.date.month < 8 || this.date.month % 2 == 1 && this.date.month > 7) {
+                amount = 30;
+            }
+            if (this.date.month % 2 == 0 && this.date.month > 7 || this.date.month % 2 == 1 && this.date.month < 8) {
+                amount = 31;
+            }
+            if (this.date.month == 2) {
+                //if is schrikkeljaar
+                amount = 28;
+                //if is not
+                amount = 27;
+            }
+            for (var i = 1; i <= amount; i++) {
+                this.days.push(i);
+            }
+        },
+        fillYears: function fillYears() {
+            for (var i = this.date.year; i < this.date.year + 5; i++) {
+                this.years.push(i);
+            }
+        },
         fetchData: function fetchData() {
             var _this = this;
 
+            var d = new Date();
+            this.date.day = d.getDate();
+            this.date.month = this.months[d.getMonth()].id;
+            this.date.year = d.getFullYear();
+            this.changeMonth();
+            this.fillYears();
             this.error = '';
             this.loading = true;
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/tasks').then(function (response) {
@@ -29439,6 +29487,125 @@ var render = function() {
                   _vm._v(" "),
                   _c("br"),
                   _vm._v(" "),
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.date.day,
+                          expression: "date.day"
+                        }
+                      ],
+                      on: {
+                        change: function($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function(o) {
+                              return o.selected
+                            })
+                            .map(function(o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.$set(
+                            _vm.date,
+                            "day",
+                            $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          )
+                        }
+                      }
+                    },
+                    _vm._l(_vm.days, function(day) {
+                      return _c("option", { domProps: { value: day } }, [
+                        _vm._v(_vm._s(day))
+                      ])
+                    })
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.date.month,
+                          expression: "date.month"
+                        }
+                      ],
+                      on: {
+                        change: [
+                          function($event) {
+                            var $$selectedVal = Array.prototype.filter
+                              .call($event.target.options, function(o) {
+                                return o.selected
+                              })
+                              .map(function(o) {
+                                var val = "_value" in o ? o._value : o.value
+                                return val
+                              })
+                            _vm.$set(
+                              _vm.date,
+                              "month",
+                              $event.target.multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
+                            )
+                          },
+                          _vm.changeMonth
+                        ]
+                      }
+                    },
+                    _vm._l(_vm.months, function(month) {
+                      return _c("option", { domProps: { value: month.id } }, [
+                        _vm._v(_vm._s(month.name))
+                      ])
+                    })
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.date.year,
+                          expression: "date.year"
+                        }
+                      ],
+                      on: {
+                        change: function($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function(o) {
+                              return o.selected
+                            })
+                            .map(function(o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.$set(
+                            _vm.date,
+                            "year",
+                            $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          )
+                        }
+                      }
+                    },
+                    _vm._l(_vm.years, function(year) {
+                      return _c("option", { domProps: { value: year } }, [
+                        _vm._v(_vm._s(year))
+                      ])
+                    })
+                  ),
+                  _vm._v(" "),
+                  _c("br"),
+                  _vm._v(" "),
                   _c("input", {
                     directives: [
                       {
@@ -29863,7 +30030,7 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-039527b1", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-07ef01f7", module.exports)
   }
 }
 
