@@ -10423,3 +10423,8 @@ a.text-dark:focus {
   padding-left: 50px;
 }
 
+.time {
+  width: 25px;
+  padding-left: 3px;
+}
+

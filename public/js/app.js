@@ -28230,6 +28230,40 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -28256,14 +28290,31 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             files: [],
             imageTypes: ["bmp", "gif", "jpe", "jpeg", "jpg", "svg", "png"],
             attachmentName: "",
-            date: {
-                day: null,
-                month: null,
-                year: null
-            },
             days: [],
             months: [{ id: 1, name: 'January' }, { id: 2, name: 'February' }, { id: 3, name: 'March' }, { id: 4, name: 'April' }, { id: 5, name: 'May' }, { id: 6, name: 'June' }, { id: 7, name: 'July' }, { id: 8, name: 'August' }, { id: 9, name: 'September' }, { id: 10, name: 'October' }, { id: 11, name: 'November' }, { id: 12, name: 'December' }],
-            years: []
+            years: [],
+            date: {
+                from: {
+                    day: null,
+                    month: null,
+                    year: null
+                },
+                to: {
+                    day: null,
+                    month: null,
+                    year: null
+                }
+            },
+            time: {
+                from: {
+                    hour: null,
+                    minute: null
+                },
+                to: {
+                    hour: null,
+                    minute: null
+                }
+            }
         };
     },
     created: function created() {
@@ -28274,13 +28325,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         changeMonth: function changeMonth() {
             this.days = [];
             var amount = 0;
-            if (this.date.month % 2 == 0 && this.date.month < 8 || this.date.month % 2 == 1 && this.date.month > 7) {
+            if (this.date.from.month % 2 == 0 && this.date.from.month < 8 || this.date.from.month % 2 == 1 && this.date.from.month > 7) {
                 amount = 30;
             }
-            if (this.date.month % 2 == 0 && this.date.month > 7 || this.date.month % 2 == 1 && this.date.month < 8) {
+            if (this.date.from.month % 2 == 0 && this.date.from.month > 7 || this.date.from.month % 2 == 1 && this.date.from.month < 8) {
                 amount = 31;
             }
-            if (this.date.month == 2) {
+            if (this.date.from.month == 2) {
                 //if is schrikkeljaar
                 amount = 28;
                 //if is not
@@ -28291,19 +28342,25 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
         },
         fillYears: function fillYears() {
-            for (var i = this.date.year; i < this.date.year + 5; i++) {
+            for (var i = this.date.from.year; i < this.date.from.year + 5; i++) {
                 this.years.push(i);
             }
         },
         fetchData: function fetchData() {
             var _this = this;
 
-            var d = new Date();
-            this.date.day = d.getDate();
-            this.date.month = this.months[d.getMonth()].id;
-            this.date.year = d.getFullYear();
-            this.changeMonth();
-            this.fillYears();
+            if (!this.edit) {
+                var d = new Date();
+                this.date.from.day = this.date.to.day = d.getDate();
+                this.date.from.month = this.date.to.month = this.months[d.getMonth()].id;
+                this.date.from.year = this.date.to.year = d.getFullYear();
+                this.time.from.hour = d.getHours();
+                this.time.from.minute = d.getMinutes();
+                this.time.to.hour = d.getHours() + 1;
+                this.time.to.minute = d.getMinutes();
+                this.changeMonth();
+                this.fillYears();
+            }
             this.error = '';
             this.loading = true;
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/tasks').then(function (response) {
@@ -28330,13 +28387,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 response.data.starts_at = response.data.starts_at.replace(' ', 'T');
                 response.data.ends_at = response.data.ends_at.replace(' ', 'T');
                 _this2.task = response.data;
+                var dateSplitted = _this2.task.starts_at.split('-').join('T').split('T').join(':').split(':');
+                _this2.date.from.year = dateSplitted[0];
+                _this2.date.from.month = _this2.months[parseInt(dateSplitted[1]) - 1].id;
+                _this2.date.from.day = dateSplitted[2];
+                _this2.time.from.hour = dateSplitted[3];
+                _this2.time.from.minute = dateSplitted[4];
+                dateSplitted = _this2.task.ends_at.split('-').join('T').split('T').join(':').split(':');
+                _this2.date.to.year = dateSplitted[0];
+                _this2.date.to.month = _this2.months[parseInt(dateSplitted[1]) - 1].id;
+                _this2.date.to.day = dateSplitted[2];
+                _this2.time.to.hour = dateSplitted[3];
+                _this2.time.to.minute = dateSplitted[4];
                 _this2.loading = false;
                 var fileSplitted = _this2.task.attachment.split('.').join('/').split('/');
                 _this2.attachmentName = fileSplitted[fileSplitted.length - 2];
-                _this2.attachmentName = _this2.attachmentName.split('_').splice(1).join("_");
-                var fileExt = fileSplitted[fileSplitted.length - 1];
-                if (_this2.imageTypes.indexOf(fileExt) != -1) {
-                    _this2.isImage = true;
+                if (typeof _this2.attachmentName != 'undefined') {
+                    _this2.attachmentName = _this2.attachmentName.split('_').splice(1).join("_");
+                    var fileExt = fileSplitted[fileSplitted.length - 1];
+                    if (_this2.imageTypes.indexOf(fileExt) != -1) {
+                        _this2.isImage = true;
+                    }
                 }
             });
         },
@@ -28361,8 +28432,44 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         updateTask: function updateTask() {
             var _this3 = this;
 
-            //TODO: Validate postdata
             this.inputInfo = "";
+
+            var dateJoined = "";
+            var timeJoined = "";
+            var array = [];
+            array.push(this.date.from.year);
+            if (this.date.from.month > 9) {
+                array.push(this.date.from.month);
+            } else {
+                var corrected = "0" + this.date.from.month;
+                array.push(corrected);
+            }
+            array.push(this.date.from.day);
+            dateJoined = array.join("-");
+            array = [];
+            array.push(this.time.from.hour);
+            array.push(this.time.from.minute);
+            timeJoined = array.join(":");
+            timeJoined = timeJoined + ":00";
+            this.task.starts_at = dateJoined + "T" + timeJoined;
+
+            array = [];
+            array.push(this.date.to.year);
+            if (this.date.to.month > 9) {
+                array.push(this.date.to.month);
+            } else {
+                var _corrected = "0" + this.date.to.month;
+                array.push(_corrected);
+            }
+            array.push(this.date.to.day);
+            dateJoined = array.join("-");
+            array = [];
+            array.push(this.time.to.hour);
+            array.push(this.time.to.minute);
+            timeJoined = array.join(":");
+            timeJoined = timeJoined + ":00";
+            this.task.ends_at = dateJoined + "T" + timeJoined;
+
             // Checking if everything is filled in
             if (this.task.title == "") {
                 this.inputInfo += "<li>A <b>title</b> is required</li>";
@@ -28388,9 +28495,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 formData.set('starts_at', this.task.starts_at);
                 formData.set('ends_at', this.task.ends_at);
                 formData.set('_method', 'PATCH');
-                formData.append('attachment', this.task.attachment, this.task.attachment.name);
+                console.log("before");
+                if (typeof this.task.attachment.name != 'undefined') {
+                    formData.append('attachment', this.task.attachment, this.task.attachment.name);
+                }
+                console.log('after');
                 __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/task/' + this.task.id, formData).then(function (response) {
                     _this3.saveInfo = "Task saved successfully!";
+                    console.log(_this3.date.to.month);
                     _this3.fetchData();
                 });
             }
@@ -28403,6 +28515,43 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             //TODO: validate postdata
             this.inputInfo = "";
+
+            var dateJoined = "";
+            var timeJoined = "";
+            var array = [];
+            array.push(this.date.from.year);
+            if (this.date.from.month > 9) {
+                array.push(this.date.from.month);
+            } else {
+                var corrected = "0" + this.date.from.month;
+                array.push(corrected);
+            }
+            array.push(this.date.from.day);
+            dateJoined = array.join("-");
+            array = [];
+            array.push(this.time.from.hour);
+            array.push(this.time.from.minute);
+            timeJoined = array.join(":");
+            timeJoined = timeJoined + ":00";
+            this.task.starts_at = dateJoined + "T" + timeJoined;
+
+            array = [];
+            array.push(this.date.to.year);
+            if (this.date.to.month > 9) {
+                array.push(this.date.to.month);
+            } else {
+                var _corrected2 = "0" + this.date.to.month;
+                array.push(_corrected2);
+            }
+            array.push(this.date.to.day);
+            dateJoined = array.join("-");
+            array = [];
+            array.push(this.time.to.hour);
+            array.push(this.time.to.minute);
+            timeJoined = array.join(":");
+            timeJoined = timeJoined + ":00";
+            this.task.ends_at = dateJoined + "T" + timeJoined;
+
             // Checking if everything is filled in
             if (this.task.title == "") {
                 this.inputInfo += "<li>A <b>title</b> is required to make a new task</li>";
@@ -28427,7 +28576,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 formData.append('description', this.task.description);
                 formData.append('starts_at', this.task.starts_at);
                 formData.append('ends_at', this.task.ends_at);
-                formData.append('attachment', this.task.attachment, this.task.attachment.name);
+                if (typeof this.task.attachment.name != 'undefined') {
+                    formData.append('attachment', this.task.attachment, this.task.attachment.name);
+                }
                 __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/task', formData).then(function (response) {
                     _this4.saveInfo = "New task created successfully!";
                     _this4.fetchData();
@@ -29494,8 +29645,8 @@ var render = function() {
                         {
                           name: "model",
                           rawName: "v-model",
-                          value: _vm.date.day,
-                          expression: "date.day"
+                          value: _vm.date.from.day,
+                          expression: "date.from.day"
                         }
                       ],
                       on: {
@@ -29509,7 +29660,7 @@ var render = function() {
                               return val
                             })
                           _vm.$set(
-                            _vm.date,
+                            _vm.date.from,
                             "day",
                             $event.target.multiple
                               ? $$selectedVal
@@ -29532,8 +29683,8 @@ var render = function() {
                         {
                           name: "model",
                           rawName: "v-model",
-                          value: _vm.date.month,
-                          expression: "date.month"
+                          value: _vm.date.from.month,
+                          expression: "date.from.month"
                         }
                       ],
                       on: {
@@ -29548,7 +29699,7 @@ var render = function() {
                                 return val
                               })
                             _vm.$set(
-                              _vm.date,
+                              _vm.date.from,
                               "month",
                               $event.target.multiple
                                 ? $$selectedVal
@@ -29573,8 +29724,8 @@ var render = function() {
                         {
                           name: "model",
                           rawName: "v-model",
-                          value: _vm.date.year,
-                          expression: "date.year"
+                          value: _vm.date.from.year,
+                          expression: "date.from.year"
                         }
                       ],
                       on: {
@@ -29588,7 +29739,7 @@ var render = function() {
                               return val
                             })
                           _vm.$set(
-                            _vm.date,
+                            _vm.date.from,
                             "year",
                             $event.target.multiple
                               ? $$selectedVal
@@ -29604,50 +29755,209 @@ var render = function() {
                     })
                   ),
                   _vm._v(" "),
-                  _c("br"),
-                  _vm._v(" "),
                   _c("input", {
                     directives: [
                       {
                         name: "model",
                         rawName: "v-model",
-                        value: _vm.task.starts_at,
-                        expression: "task.starts_at"
+                        value: _vm.time.from.hour,
+                        expression: "time.from.hour"
                       }
                     ],
-                    staticClass: "form-control",
-                    attrs: { type: "datetime-local" },
-                    domProps: { value: _vm.task.starts_at },
+                    staticClass: "time",
+                    attrs: { type: "text" },
+                    domProps: { value: _vm.time.from.hour },
                     on: {
                       input: function($event) {
                         if ($event.target.composing) {
                           return
                         }
-                        _vm.$set(_vm.task, "starts_at", $event.target.value)
+                        _vm.$set(_vm.time.from, "hour", $event.target.value)
+                      }
+                    }
+                  }),
+                  _vm._v(" :\n                        "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.time.from.minute,
+                        expression: "time.from.minute"
+                      }
+                    ],
+                    staticClass: "time",
+                    attrs: { type: "text" },
+                    domProps: { value: _vm.time.from.minute },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.time.from, "minute", $event.target.value)
                       }
                     }
                   }),
                   _vm._v(" "),
                   _c("br"),
                   _vm._v(" "),
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.date.to.day,
+                          expression: "date.to.day"
+                        }
+                      ],
+                      on: {
+                        change: function($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function(o) {
+                              return o.selected
+                            })
+                            .map(function(o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.$set(
+                            _vm.date.to,
+                            "day",
+                            $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          )
+                        }
+                      }
+                    },
+                    _vm._l(_vm.days, function(day) {
+                      return _c("option", { domProps: { value: day } }, [
+                        _vm._v(_vm._s(day))
+                      ])
+                    })
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.date.to.month,
+                          expression: "date.to.month"
+                        }
+                      ],
+                      on: {
+                        change: [
+                          function($event) {
+                            var $$selectedVal = Array.prototype.filter
+                              .call($event.target.options, function(o) {
+                                return o.selected
+                              })
+                              .map(function(o) {
+                                var val = "_value" in o ? o._value : o.value
+                                return val
+                              })
+                            _vm.$set(
+                              _vm.date.to,
+                              "month",
+                              $event.target.multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
+                            )
+                          },
+                          _vm.changeMonth
+                        ]
+                      }
+                    },
+                    _vm._l(_vm.months, function(month) {
+                      return _c("option", { domProps: { value: month.id } }, [
+                        _vm._v(_vm._s(month.name))
+                      ])
+                    })
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.date.to.year,
+                          expression: "date.to.year"
+                        }
+                      ],
+                      on: {
+                        change: function($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function(o) {
+                              return o.selected
+                            })
+                            .map(function(o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.$set(
+                            _vm.date.to,
+                            "year",
+                            $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          )
+                        }
+                      }
+                    },
+                    _vm._l(_vm.years, function(year) {
+                      return _c("option", { domProps: { value: year } }, [
+                        _vm._v(_vm._s(year))
+                      ])
+                    })
+                  ),
+                  _vm._v(" "),
                   _c("input", {
                     directives: [
                       {
                         name: "model",
                         rawName: "v-model",
-                        value: _vm.task.ends_at,
-                        expression: "task.ends_at"
+                        value: _vm.time.to.hour,
+                        expression: "time.to.hour"
                       }
                     ],
-                    staticClass: "form-control",
-                    attrs: { type: "datetime-local" },
-                    domProps: { value: _vm.task.ends_at },
+                    staticClass: "time",
+                    attrs: { type: "text" },
+                    domProps: { value: _vm.time.to.hour },
                     on: {
                       input: function($event) {
                         if ($event.target.composing) {
                           return
                         }
-                        _vm.$set(_vm.task, "ends_at", $event.target.value)
+                        _vm.$set(_vm.time.to, "hour", $event.target.value)
+                      }
+                    }
+                  }),
+                  _vm._v(" :\n                        "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.time.to.minute,
+                        expression: "time.to.minute"
+                      }
+                    ],
+                    staticClass: "time",
+                    attrs: { type: "text" },
+                    domProps: { value: _vm.time.to.minute },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.time.to, "minute", $event.target.value)
                       }
                     }
                   }),
@@ -29740,48 +30050,326 @@ var render = function() {
                   _vm._v(" "),
                   _c("br"),
                   _vm._v(" "),
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.date.from.day,
+                          expression: "date.from.day"
+                        }
+                      ],
+                      on: {
+                        change: function($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function(o) {
+                              return o.selected
+                            })
+                            .map(function(o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.$set(
+                            _vm.date.from,
+                            "day",
+                            $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          )
+                        }
+                      }
+                    },
+                    _vm._l(_vm.days, function(day) {
+                      return _c("option", { domProps: { value: day } }, [
+                        _vm._v(_vm._s(day))
+                      ])
+                    })
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.date.from.month,
+                          expression: "date.from.month"
+                        }
+                      ],
+                      on: {
+                        change: [
+                          function($event) {
+                            var $$selectedVal = Array.prototype.filter
+                              .call($event.target.options, function(o) {
+                                return o.selected
+                              })
+                              .map(function(o) {
+                                var val = "_value" in o ? o._value : o.value
+                                return val
+                              })
+                            _vm.$set(
+                              _vm.date.from,
+                              "month",
+                              $event.target.multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
+                            )
+                          },
+                          _vm.changeMonth
+                        ]
+                      }
+                    },
+                    _vm._l(_vm.months, function(month) {
+                      return _c("option", { domProps: { value: month.id } }, [
+                        _vm._v(_vm._s(month.name))
+                      ])
+                    })
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.date.from.year,
+                          expression: "date.from.year"
+                        }
+                      ],
+                      on: {
+                        change: function($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function(o) {
+                              return o.selected
+                            })
+                            .map(function(o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.$set(
+                            _vm.date.from,
+                            "year",
+                            $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          )
+                        }
+                      }
+                    },
+                    _vm._l(_vm.years, function(year) {
+                      return _c("option", { domProps: { value: year } }, [
+                        _vm._v(_vm._s(year))
+                      ])
+                    })
+                  ),
+                  _vm._v(" "),
                   _c("input", {
                     directives: [
                       {
                         name: "model",
                         rawName: "v-model",
-                        value: _vm.task.starts_at,
-                        expression: "task.starts_at"
+                        value: _vm.time.from.hour,
+                        expression: "time.from.hour"
                       }
                     ],
-                    staticClass: "form-control",
-                    attrs: { type: "datetime-local" },
-                    domProps: { value: _vm.task.starts_at },
+                    staticClass: "time",
+                    attrs: { type: "text" },
+                    domProps: { value: _vm.time.from.hour },
                     on: {
                       input: function($event) {
                         if ($event.target.composing) {
                           return
                         }
-                        _vm.$set(_vm.task, "starts_at", $event.target.value)
+                        _vm.$set(_vm.time.from, "hour", $event.target.value)
+                      }
+                    }
+                  }),
+                  _vm._v(" :\n                        "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.time.from.minute,
+                        expression: "time.from.minute"
+                      }
+                    ],
+                    staticClass: "time",
+                    attrs: { type: "text" },
+                    domProps: { value: _vm.time.from.minute },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.time.from, "minute", $event.target.value)
                       }
                     }
                   }),
                   _vm._v(" "),
                   _c("br"),
                   _vm._v(" "),
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.date.to.day,
+                          expression: "date.to.day"
+                        }
+                      ],
+                      on: {
+                        change: function($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function(o) {
+                              return o.selected
+                            })
+                            .map(function(o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.$set(
+                            _vm.date.to,
+                            "day",
+                            $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          )
+                        }
+                      }
+                    },
+                    _vm._l(_vm.days, function(day) {
+                      return _c("option", { domProps: { value: day } }, [
+                        _vm._v(_vm._s(day))
+                      ])
+                    })
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.date.to.month,
+                          expression: "date.to.month"
+                        }
+                      ],
+                      on: {
+                        change: [
+                          function($event) {
+                            var $$selectedVal = Array.prototype.filter
+                              .call($event.target.options, function(o) {
+                                return o.selected
+                              })
+                              .map(function(o) {
+                                var val = "_value" in o ? o._value : o.value
+                                return val
+                              })
+                            _vm.$set(
+                              _vm.date.to,
+                              "month",
+                              $event.target.multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
+                            )
+                          },
+                          _vm.changeMonth
+                        ]
+                      }
+                    },
+                    _vm._l(_vm.months, function(month) {
+                      return _c("option", { domProps: { value: month.id } }, [
+                        _vm._v(_vm._s(month.name))
+                      ])
+                    })
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.date.to.year,
+                          expression: "date.to.year"
+                        }
+                      ],
+                      on: {
+                        change: function($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function(o) {
+                              return o.selected
+                            })
+                            .map(function(o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.$set(
+                            _vm.date.to,
+                            "year",
+                            $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          )
+                        }
+                      }
+                    },
+                    _vm._l(_vm.years, function(year) {
+                      return _c("option", { domProps: { value: year } }, [
+                        _vm._v(_vm._s(year))
+                      ])
+                    })
+                  ),
+                  _vm._v(" "),
                   _c("input", {
                     directives: [
                       {
                         name: "model",
                         rawName: "v-model",
-                        value: _vm.task.ends_at,
-                        expression: "task.ends_at"
+                        value: _vm.time.to.hour,
+                        expression: "time.to.hour"
                       }
                     ],
-                    staticClass: "form-control",
-                    attrs: { type: "datetime-local" },
-                    domProps: { value: _vm.task.ends_at },
+                    staticClass: "time",
+                    attrs: { type: "text" },
+                    domProps: { value: _vm.time.to.hour },
                     on: {
                       input: function($event) {
                         if ($event.target.composing) {
                           return
                         }
-                        _vm.$set(_vm.task, "ends_at", $event.target.value)
+                        _vm.$set(_vm.time.to, "hour", $event.target.value)
+                      }
+                    }
+                  }),
+                  _vm._v(" :\n                        "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.time.to.minute,
+                        expression: "time.to.minute"
+                      }
+                    ],
+                    staticClass: "time",
+                    attrs: { type: "text" },
+                    domProps: { value: _vm.time.to.minute },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.time.to, "minute", $event.target.value)
                       }
                     }
                   }),

@@ -22,19 +22,31 @@
                             <br />
                             <textarea class="form-control" v-model="task.description" placeholder="Description"></textarea>
                             <br />
-                            <select v-model="date.day">
+                            <!-- Datepicker -->
+                            <select v-model="date.from.day">
                                 <option v-bind:value="day" v-for="day in days">{{ day }}</option>
                             </select>
-                            <select v-model="date.month" v-on:change="changeMonth">
+                            <select v-model="date.from.month" v-on:change="changeMonth">
                                 <option v-bind:value="month.id" v-for="month in months">{{ month.name }}</option>
                             </select>
-                            <select v-model="date.year">
+                            <select v-model="date.from.year">
                                 <option v-bind:value="year" v-for="year in years">{{ year }}</option>
                             </select>
+                            <input class="time" type="text" v-model="time.from.hour" /> :
+                            <input class="time" type="text" v-model="time.from.minute" />
                             <br />
-                            <input type="datetime-local" class="form-control" v-model="task.starts_at" />
-                            <br />
-                            <input type="datetime-local" class="form-control" v-model="task.ends_at" />
+                            <select v-model="date.to.day">
+                                <option v-bind:value="day" v-for="day in days">{{ day }}</option>
+                            </select>
+                            <select v-model="date.to.month" v-on:change="changeMonth">
+                                <option v-bind:value="month.id" v-for="month in months">{{ month.name }}</option>
+                            </select>
+                            <select v-model="date.to.year">
+                                <option v-bind:value="year" v-for="year in years">{{ year }}</option>
+                            </select>
+                            <input class="time" type="text" v-model="time.to.hour" /> :
+                            <input class="time" type="text" v-model="time.to.minute" />
+                            <!-- End Datepicker-->
                             <br />
                             <div v-if="imageData.length > 0">
                                 <img width="200px" :src=imageData />
@@ -52,9 +64,31 @@
                             <br />
                             <textarea class="form-control" v-model="task.description"></textarea>
                             <br />
-                            <input type="datetime-local" class="form-control" v-model="task.starts_at" />
+                            <!-- Datepicker -->
+                            <select v-model="date.from.day">
+                                <option v-bind:value="day" v-for="day in days">{{ day }}</option>
+                            </select>
+                            <select v-model="date.from.month" v-on:change="changeMonth">
+                                <option v-bind:value="month.id" v-for="month in months">{{ month.name }}</option>
+                            </select>
+                            <select v-model="date.from.year">
+                                <option v-bind:value="year" v-for="year in years">{{ year }}</option>
+                            </select>
+                            <input class="time" type="text" v-model="time.from.hour" /> :
+                            <input class="time" type="text" v-model="time.from.minute" />
                             <br />
-                            <input type="datetime-local" class="form-control" v-model="task.ends_at" />
+                            <select v-model="date.to.day">
+                                <option v-bind:value="day" v-for="day in days">{{ day }}</option>
+                            </select>
+                            <select v-model="date.to.month" v-on:change="changeMonth">
+                                <option v-bind:value="month.id" v-for="month in months">{{ month.name }}</option>
+                            </select>
+                            <select v-model="date.to.year">
+                                <option v-bind:value="year" v-for="year in years">{{ year }}</option>
+                            </select>
+                            <input class="time" type="text" v-model="time.to.hour" /> :
+                            <input class="time" type="text" v-model="time.to.minute" />
+                            <!-- End Datepicker-->
                             <br />
                             <!-- <span class="downloadLink" @click="downloadAttachment"></span> -->
                             <h5 v-if="task.attachment"><b>Download:</b><a :href="task.attachment" download>{{ attachmentName }}</a></h5>
@@ -138,11 +172,6 @@
                 files: [],
                 imageTypes:["bmp", "gif", "jpe", "jpeg", "jpg", "svg", "png"],
                 attachmentName: "",
-                date: {
-                    day: null,
-                    month: null,
-                    year: null,
-                },
                 days: [],
                 months: [
                     {id:1, name:'January'},
@@ -159,6 +188,28 @@
                     {id:12, name:'December'},
                 ],
                 years: [],
+                date: {
+                    from: {
+                        day: null,
+                        month: null,
+                        year: null,
+                    },
+                    to: {
+                        day: null,
+                        month: null,
+                        year: null,
+                    }
+                },
+                time: {
+                    from: {
+                        hour: null,
+                        minute: null,
+                    },
+                    to: {
+                        hour: null,
+                        minute: null,
+                    },
+                },
             };
         },
         created() {
@@ -168,13 +219,13 @@
             changeMonth() {
                 this.days = [];
                 let amount = 0;
-                if((this.date.month % 2 == 0 && this.date.month < 8) || (this.date.month % 2 == 1 && this.date.month > 7)){
+                if((this.date.from.month % 2 == 0 && this.date.from.month < 8) || (this.date.from.month % 2 == 1 && this.date.from.month > 7)){
                     amount = 30;
                 }
-                if((this.date.month % 2 == 0 && this.date.month > 7) || (this.date.month % 2 == 1 && this.date.month < 8)){
+                if((this.date.from.month % 2 == 0 && this.date.from.month > 7) || (this.date.from.month % 2 == 1 && this.date.from.month < 8)){
                     amount = 31;
                 }
-                if(this.date.month==2){
+                if(this.date.from.month==2){
                     //if is schrikkeljaar
                     amount = 28;
                     //if is not
@@ -186,18 +237,24 @@
             },
 
             fillYears() {
-                for(let i = this.date.year; i < (this.date.year + 5); i++) {
+                for(let i = this.date.from.year; i < (this.date.from.year + 5); i++) {
                     this.years.push(i);
                 }
             },
 
             fetchData() {
-                let d = new Date();
-                this.date.day = d.getDate();
-                this.date.month = this.months[d.getMonth()].id;
-                this.date.year = d.getFullYear();
-                this.changeMonth();
-                this.fillYears();
+                if(!this.edit){
+                    let d = new Date();
+                    this.date.from.day = this.date.to.day = d.getDate();
+                    this.date.from.month = this.date.to.month = this.months[d.getMonth()].id;
+                    this.date.from.year = this.date.to.year = d.getFullYear();
+                    this.time.from.hour = d.getHours();
+                    this.time.from.minute = d.getMinutes();
+                    this.time.to.hour = d.getHours() + 1;
+                    this.time.to.minute = d.getMinutes();
+                    this.changeMonth();
+                    this.fillYears();
+                }
                 this.error = '';
                 this.loading = true;
                 axios
@@ -225,13 +282,27 @@
                         response.data.starts_at = response.data.starts_at.replace(' ', 'T');
                         response.data.ends_at = response.data.ends_at.replace(' ', 'T');
                         this.task = response.data;
+                        let dateSplitted = this.task.starts_at.split('-').join('T').split('T').join(':').split(':');
+                        this.date.from.year = dateSplitted[0];
+                        this.date.from.month = this.months[parseInt(dateSplitted[1]) -1].id;
+                        this.date.from.day = dateSplitted[2];
+                        this.time.from.hour = dateSplitted[3];
+                        this.time.from.minute = dateSplitted[4];
+                        dateSplitted = this.task.ends_at.split('-').join('T').split('T').join(':').split(':');
+                        this.date.to.year = dateSplitted[0];
+                        this.date.to.month = this.months[parseInt(dateSplitted[1]) -1].id;
+                        this.date.to.day = dateSplitted[2];
+                        this.time.to.hour = dateSplitted[3];
+                        this.time.to.minute = dateSplitted[4];
                         this.loading = false;
                         let fileSplitted = this.task.attachment.split('.').join('/').split('/');
                         this.attachmentName = fileSplitted[fileSplitted.length-2];
-                        this.attachmentName = this.attachmentName.split('_').splice(1).join("_");
-                        let fileExt = fileSplitted[fileSplitted.length-1];
-                        if(this.imageTypes.indexOf(fileExt) != -1) {
-                            this.isImage = true;
+                        if(typeof this.attachmentName != 'undefined'){
+                            this.attachmentName = this.attachmentName.split('_').splice(1).join("_");
+                            let fileExt = fileSplitted[fileSplitted.length-1];
+                            if(this.imageTypes.indexOf(fileExt) != -1) {
+                                this.isImage = true;
+                            }
                         }
                     });
             },
@@ -252,8 +323,44 @@
 
             // Save the edited task
             updateTask() {
-                //TODO: Validate postdata
                 this.inputInfo = "";
+                
+                let dateJoined = "";
+                let timeJoined = "";
+                let array = [];
+                array.push(this.date.from.year);
+                if(this.date.from.month > 9){
+                    array.push(this.date.from.month);
+                } else {
+                    let corrected = "0" + this.date.from.month;
+                    array.push(corrected);
+                }
+                array.push(this.date.from.day);
+                dateJoined = array.join("-");
+                array = [];
+                array.push(this.time.from.hour);
+                array.push(this.time.from.minute);
+                timeJoined = array.join(":");
+                timeJoined = timeJoined + ":00";
+                this.task.starts_at = dateJoined + "T" + timeJoined;
+
+                array = [];
+                array.push(this.date.to.year);
+                if(this.date.to.month > 9){
+                    array.push(this.date.to.month);
+                } else {
+                    let corrected = "0" + this.date.to.month;
+                    array.push(corrected);
+                }
+                array.push(this.date.to.day);
+                dateJoined = array.join("-");
+                array = [];
+                array.push(this.time.to.hour);
+                array.push(this.time.to.minute);
+                timeJoined = array.join(":");
+                timeJoined = timeJoined + ":00";
+                this.task.ends_at = dateJoined + "T" + timeJoined;
+
                 // Checking if everything is filled in
                 if(this.task.title == "") {
                     this.inputInfo += "<li>A <b>title</b> is required</li>"
@@ -279,10 +386,15 @@
                     formData.set('starts_at', this.task.starts_at);
                     formData.set('ends_at', this.task.ends_at);
                     formData.set('_method', 'PATCH');
-                    formData.append('attachment', this.task.attachment, this.task.attachment.name);
+                    console.log("before");
+                    if (typeof this.task.attachment.name != 'undefined') {
+                        formData.append('attachment', this.task.attachment, this.task.attachment.name);
+                    }
+                    console.log('after');
                     axios.post('/api/task/' + this.task.id, formData)
                         .then(response => {
                             this.saveInfo = "Task saved successfully!"
+                            console.log(this.date.to.month);
                             this.fetchData();
                         });
                 }
@@ -292,6 +404,43 @@
             createTask() {
                 //TODO: validate postdata
                 this.inputInfo = "";
+
+                let dateJoined = "";
+                let timeJoined = "";
+                let array = [];
+                array.push(this.date.from.year);
+                if(this.date.from.month > 9){
+                    array.push(this.date.from.month);
+                } else {
+                    let corrected = "0" + this.date.from.month;
+                    array.push(corrected);
+                }
+                array.push(this.date.from.day);
+                dateJoined = array.join("-");
+                array = [];
+                array.push(this.time.from.hour);
+                array.push(this.time.from.minute);
+                timeJoined = array.join(":");
+                timeJoined = timeJoined + ":00";
+                this.task.starts_at = dateJoined + "T" + timeJoined;
+
+                array = [];
+                array.push(this.date.to.year);
+                if(this.date.to.month > 9){
+                    array.push(this.date.to.month);
+                } else {
+                    let corrected = "0" + this.date.to.month;
+                    array.push(corrected);
+                }
+                array.push(this.date.to.day);
+                dateJoined = array.join("-");
+                array = [];
+                array.push(this.time.to.hour);
+                array.push(this.time.to.minute);
+                timeJoined = array.join(":");
+                timeJoined = timeJoined + ":00";
+                this.task.ends_at = dateJoined + "T" + timeJoined;
+
                 // Checking if everything is filled in
                 if(this.task.title == "") {
                     this.inputInfo += "<li>A <b>title</b> is required to make a new task</li>"
@@ -316,7 +465,9 @@
                     formData.append('description', this.task.description);
                     formData.append('starts_at', this.task.starts_at);
                     formData.append('ends_at', this.task.ends_at);
-                    formData.append('attachment', this.task.attachment, this.task.attachment.name);
+                    if (typeof this.task.attachment.name != 'undefined') {
+                        formData.append('attachment', this.task.attachment, this.task.attachment.name);
+                    }
                     axios
                         .post('/api/task', formData)
                         .then(response => {
