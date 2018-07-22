@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Task;
 use Storage;
 use Illuminate\Http\File;
+use Validator;
 
 class TaskController extends Controller
 {
@@ -16,8 +17,13 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::get()->toArray();
-        return response()->json($tasks);
+        try {
+            $tasks = Task::get()->toArray();
+        } catch (\Exception $e) {
+            return response()->json(["message"=>"Can't connect to database server. Contact site administration."], 500);
+        }
+
+        return response()->json($tasks, 200);
     }
 
     /**
@@ -28,19 +34,43 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'title'         => 'required|max:255|min:1',
+            'description'   => 'required|min:1',
+            'starts_at'     => 'bail|required|date',
+            'ends_at'       => 'required|date|after:starts_at',
+        ]);
+        if ($validator->fails()) {
+            $errors = [];
+            foreach ($validator->errors()->getMessages() as $errorarray) {
+                foreach ($errorarray as $error) {
+                    $errors[] = $error;
+                }
+            }
+            return response()->json(["message"=>"Request contains errors.", "errors"=>$errors], 400);
+        }
         $task               = new Task();
         $task->title        = $request->input('title');
         $task->description  = $request->input('description');
         $task->starts_at    = $request->input('starts_at');
         $task->ends_at      = $request->input('ends_at');
-        $task->save();
+        try {
+            $task->save();
+        } catch (\Exception $e) {
+            return response()->json(["message"=>"Can't connect to database server. Contact site administration."], 500);
+        }
 
         // Save attachment if there is one
         if (!empty($_FILES)) {
             if (!empty($_FILES['attachment'])) {
                 $att = $_FILES['attachment'];
                 if (!$att['error']) {
-                    $file_path = Storage::putFileAs('public', new File($att['tmp_name']), $task->id . '_' . $att['name']);
+                    try {
+                        $file_path = Storage::putFileAs('public', new File($att['tmp_name']), $task->id . '_' . $att['name']);
+                    } catch (\Exception $e) {
+                        return response()->json(["message"=>"Can't write to storage. Contact site administration."], 500);
+                    }
+
                     $task->attachment = $file_path;
                     $task->save();
                 }
@@ -58,7 +88,11 @@ class TaskController extends Controller
      */
     public function show($id)
     {
-        $task = Task::get()->where('id', $id)->first();
+        try {
+            $task = Task::get()->where('id', $id)->first();
+        } catch (\Exception $e) {
+            return response()->json(["message"=>"Can't connect to database server. Contact site administration."], 500);
+        }
         $task->attachment = str_replace('public/', 'storage/', $task->attachment);
         return response()->json($task);
     }
@@ -72,20 +106,42 @@ class TaskController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //TODO: Validate postdata
-        $task               = Task::find($id);
-        $task->title        = $request->input('title');
-        $task->description  = $request->input('description');
-        $task->starts_at    = $request->input('starts_at');
-        $task->ends_at      = $request->input('ends_at');
-        $task->save();
+        $validator = Validator::make($request->all(), [
+            'title'         => 'required|max:255|min:1',
+            'description'   => 'required|min:1',
+            'starts_at'     => 'bail|required|date',
+            'ends_at'       => 'required|date|after:starts_at',
+        ]);
+        if ($validator->fails()) {
+            $errors = [];
+            foreach ($validator->errors()->getMessages() as $errorarray) {
+                foreach ($errorarray as $error) {
+                    $errors[] = $error;
+                }
+            }
+            return response()->json(["message"=>"Request contains errors.", "errors"=>$errors], 400);
+        }
+        try {
+            $task               = Task::find($id);
+            $task->title        = $request->input('title');
+            $task->description  = $request->input('description');
+            $task->starts_at    = $request->input('starts_at');
+            $task->ends_at      = $request->input('ends_at');
+            $task->save();
+        } catch (\Exception $e) {
+            return response()->json(["message"=>"Can't connect to database server. Contact site administration."], 500);
+        }
 
         // Save attachment if there is one
         if (!empty($_FILES)) {
             if (!empty($_FILES['attachment'])) {
                 $att = $_FILES['attachment'];
                 if (!$att['error']) {
-                    $file_path = Storage::putFileAs('public', new File($att['tmp_name']), $task->id . '_' . $att['name']);
+                    try {
+                        $file_path = Storage::putFileAs('public', new File($att['tmp_name']), $task->id . '_' . $att['name']);
+                    } catch (\Exception $e) {
+                        return response()->json(["message"=>"Can't write to storage. Contact site administration."], 500);
+                    }
                     $task->attachment = $file_path;
                     $task->save();
                 }
@@ -103,8 +159,12 @@ class TaskController extends Controller
      */
     public function destroy($id)
     {
-        $task = Task::find($id);
-        $task->delete();
+        try {
+            $task = Task::find($id);
+            $task->delete();
+        } catch (\Exception $e) {
+            return response()->json(["message"=>"Can't connect to database server. Contact site administration."], 500);
+        }
 
         return response()->json(["message" => "deleted the tas"], 200);
     }
