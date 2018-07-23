@@ -28266,6 +28266,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -28357,9 +28371,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 this.date.from.month = this.date.to.month = this.months[d.getMonth()].id;
                 this.date.from.year = this.date.to.year = d.getFullYear();
                 this.time.from.hour = d.getHours();
-                this.time.from.minute = d.getMinutes();
+                if (d.getMinutes() < 10) {
+                    this.time.from.minute = this.time.to.minute = "0" + d.getMinutes();
+                } else {
+                    this.time.from.minute = this.time.to.minute = d.getMinutes();
+                }
                 this.time.to.hour = d.getHours() + 1;
-                this.time.to.minute = d.getMinutes();
                 this.changeMonth();
                 this.fillYears();
             }
@@ -28420,6 +28437,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
         // Close the task and show the create new task
         hideTask: function hideTask() {
+            var d = new Date();
+            this.date.from.day = this.date.to.day = d.getDate();
+            this.date.from.month = this.date.to.month = this.months[d.getMonth()].id;
+            this.date.from.year = this.date.to.year = d.getFullYear();
+            this.time.from.hour = d.getHours();
+            console.log(d.getMinutes());
+            if (d.getMinutes() < 10) {
+                this.time.from.minute = this.time.to.minute = "0" + d.getMinutes();
+            } else {
+                this.time.from.minute = this.time.to.minute = d.getMinutes();
+            }
+            this.time.to.hour = d.getHours() + 1;
             this.saveInfo = '';
             this.edit = false;
             this.task = {
@@ -29658,339 +29687,356 @@ var render = function() {
                   _vm._v(" "),
                   _c("br"),
                   _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
+                  _c("div", { staticClass: "datepicker row" }, [
+                    _c("div", { staticClass: "date-container col-auto" }, [
+                      _c(
+                        "select",
                         {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.date.from.day,
-                          expression: "date.from.day"
-                        }
-                      ],
-                      on: {
-                        change: function($event) {
-                          var $$selectedVal = Array.prototype.filter
-                            .call($event.target.options, function(o) {
-                              return o.selected
-                            })
-                            .map(function(o) {
-                              var val = "_value" in o ? o._value : o.value
-                              return val
-                            })
-                          _vm.$set(
-                            _vm.date.from,
-                            "day",
-                            $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.date.from.day,
+                              expression: "date.from.day"
+                            }
+                          ],
+                          on: {
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.$set(
+                                _vm.date.from,
+                                "day",
+                                $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              )
+                            }
+                          }
+                        },
+                        _vm._l(_vm.days, function(day) {
+                          return _c("option", { domProps: { value: day } }, [
+                            _vm._v(_vm._s(day))
+                          ])
+                        })
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.date.from.month,
+                              expression: "date.from.month"
+                            }
+                          ],
+                          on: {
+                            change: [
+                              function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.$set(
+                                  _vm.date.from,
+                                  "month",
+                                  $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                )
+                              },
+                              _vm.changeMonth
+                            ]
+                          }
+                        },
+                        _vm._l(_vm.months, function(month) {
+                          return _c(
+                            "option",
+                            { domProps: { value: month.id } },
+                            [_vm._v(_vm._s(month.name))]
                           )
-                        }
-                      }
-                    },
-                    _vm._l(_vm.days, function(day) {
-                      return _c("option", { domProps: { value: day } }, [
-                        _vm._v(_vm._s(day))
-                      ])
-                    })
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
+                        })
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "select",
                         {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.date.from.month,
-                          expression: "date.from.month"
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.date.from.year,
+                              expression: "date.from.year"
+                            }
+                          ],
+                          on: {
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.$set(
+                                _vm.date.from,
+                                "year",
+                                $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              )
+                            }
+                          }
+                        },
+                        _vm._l(_vm.years, function(year) {
+                          return _c("option", { domProps: { value: year } }, [
+                            _vm._v(_vm._s(year))
+                          ])
+                        })
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "time-container col" }, [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.time.from.hour,
+                            expression: "time.from.hour"
+                          }
+                        ],
+                        staticClass: "time",
+                        attrs: { type: "text" },
+                        domProps: { value: _vm.time.from.hour },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(_vm.time.from, "hour", $event.target.value)
+                          }
                         }
-                      ],
-                      on: {
-                        change: [
-                          function($event) {
-                            var $$selectedVal = Array.prototype.filter
-                              .call($event.target.options, function(o) {
-                                return o.selected
-                              })
-                              .map(function(o) {
-                                var val = "_value" in o ? o._value : o.value
-                                return val
-                              })
+                      }),
+                      _vm._v(" :\n                                "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.time.from.minute,
+                            expression: "time.from.minute"
+                          }
+                        ],
+                        staticClass: "time",
+                        attrs: { type: "text" },
+                        domProps: { value: _vm.time.from.minute },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
                             _vm.$set(
-                              _vm.date.from,
-                              "month",
-                              $event.target.multiple
-                                ? $$selectedVal
-                                : $$selectedVal[0]
+                              _vm.time.from,
+                              "minute",
+                              $event.target.value
                             )
-                          },
-                          _vm.changeMonth
-                        ]
-                      }
-                    },
-                    _vm._l(_vm.months, function(month) {
-                      return _c("option", { domProps: { value: month.id } }, [
-                        _vm._v(_vm._s(month.name))
-                      ])
-                    })
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.date.from.year,
-                          expression: "date.from.year"
+                          }
                         }
-                      ],
-                      on: {
-                        change: function($event) {
-                          var $$selectedVal = Array.prototype.filter
-                            .call($event.target.options, function(o) {
-                              return o.selected
-                            })
-                            .map(function(o) {
-                              var val = "_value" in o ? o._value : o.value
-                              return val
-                            })
-                          _vm.$set(
-                            _vm.date.from,
-                            "year",
-                            $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
+                      })
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "datepicker row" }, [
+                    _c("div", { staticClass: "date-container col-auto" }, [
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.date.to.day,
+                              expression: "date.to.day"
+                            }
+                          ],
+                          on: {
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.$set(
+                                _vm.date.to,
+                                "day",
+                                $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              )
+                            }
+                          }
+                        },
+                        _vm._l(_vm.days, function(day) {
+                          return _c("option", { domProps: { value: day } }, [
+                            _vm._v(_vm._s(day))
+                          ])
+                        })
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.date.to.month,
+                              expression: "date.to.month"
+                            }
+                          ],
+                          on: {
+                            change: [
+                              function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.$set(
+                                  _vm.date.to,
+                                  "month",
+                                  $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                )
+                              },
+                              _vm.changeMonth
+                            ]
+                          }
+                        },
+                        _vm._l(_vm.months, function(month) {
+                          return _c(
+                            "option",
+                            { domProps: { value: month.id } },
+                            [_vm._v(_vm._s(month.name))]
                           )
-                        }
-                      }
-                    },
-                    _vm._l(_vm.years, function(year) {
-                      return _c("option", { domProps: { value: year } }, [
-                        _vm._v(_vm._s(year))
-                      ])
-                    })
-                  ),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.time.from.hour,
-                        expression: "time.from.hour"
-                      }
-                    ],
-                    staticClass: "time",
-                    attrs: { type: "text" },
-                    domProps: { value: _vm.time.from.hour },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.time.from, "hour", $event.target.value)
-                      }
-                    }
-                  }),
-                  _vm._v(" :\n                        "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.time.from.minute,
-                        expression: "time.from.minute"
-                      }
-                    ],
-                    staticClass: "time",
-                    attrs: { type: "text" },
-                    domProps: { value: _vm.time.from.minute },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.time.from, "minute", $event.target.value)
-                      }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("br"),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
+                        })
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "select",
                         {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.date.to.day,
-                          expression: "date.to.day"
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.date.to.year,
+                              expression: "date.to.year"
+                            }
+                          ],
+                          on: {
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.$set(
+                                _vm.date.to,
+                                "year",
+                                $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              )
+                            }
+                          }
+                        },
+                        _vm._l(_vm.years, function(year) {
+                          return _c("option", { domProps: { value: year } }, [
+                            _vm._v(_vm._s(year))
+                          ])
+                        })
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "time-container col" }, [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.time.to.hour,
+                            expression: "time.to.hour"
+                          }
+                        ],
+                        staticClass: "time",
+                        attrs: { type: "text" },
+                        domProps: { value: _vm.time.to.hour },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(_vm.time.to, "hour", $event.target.value)
+                          }
                         }
-                      ],
-                      on: {
-                        change: function($event) {
-                          var $$selectedVal = Array.prototype.filter
-                            .call($event.target.options, function(o) {
-                              return o.selected
-                            })
-                            .map(function(o) {
-                              var val = "_value" in o ? o._value : o.value
-                              return val
-                            })
-                          _vm.$set(
-                            _vm.date.to,
-                            "day",
-                            $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          )
+                      }),
+                      _vm._v(" :\n                                "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.time.to.minute,
+                            expression: "time.to.minute"
+                          }
+                        ],
+                        staticClass: "time",
+                        attrs: { type: "text" },
+                        domProps: { value: _vm.time.to.minute },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(_vm.time.to, "minute", $event.target.value)
+                          }
                         }
-                      }
-                    },
-                    _vm._l(_vm.days, function(day) {
-                      return _c("option", { domProps: { value: day } }, [
-                        _vm._v(_vm._s(day))
-                      ])
-                    })
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.date.to.month,
-                          expression: "date.to.month"
-                        }
-                      ],
-                      on: {
-                        change: [
-                          function($event) {
-                            var $$selectedVal = Array.prototype.filter
-                              .call($event.target.options, function(o) {
-                                return o.selected
-                              })
-                              .map(function(o) {
-                                var val = "_value" in o ? o._value : o.value
-                                return val
-                              })
-                            _vm.$set(
-                              _vm.date.to,
-                              "month",
-                              $event.target.multiple
-                                ? $$selectedVal
-                                : $$selectedVal[0]
-                            )
-                          },
-                          _vm.changeMonth
-                        ]
-                      }
-                    },
-                    _vm._l(_vm.months, function(month) {
-                      return _c("option", { domProps: { value: month.id } }, [
-                        _vm._v(_vm._s(month.name))
-                      ])
-                    })
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.date.to.year,
-                          expression: "date.to.year"
-                        }
-                      ],
-                      on: {
-                        change: function($event) {
-                          var $$selectedVal = Array.prototype.filter
-                            .call($event.target.options, function(o) {
-                              return o.selected
-                            })
-                            .map(function(o) {
-                              var val = "_value" in o ? o._value : o.value
-                              return val
-                            })
-                          _vm.$set(
-                            _vm.date.to,
-                            "year",
-                            $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          )
-                        }
-                      }
-                    },
-                    _vm._l(_vm.years, function(year) {
-                      return _c("option", { domProps: { value: year } }, [
-                        _vm._v(_vm._s(year))
-                      ])
-                    })
-                  ),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.time.to.hour,
-                        expression: "time.to.hour"
-                      }
-                    ],
-                    staticClass: "time",
-                    attrs: { type: "text" },
-                    domProps: { value: _vm.time.to.hour },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.time.to, "hour", $event.target.value)
-                      }
-                    }
-                  }),
-                  _vm._v(" :\n                        "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.time.to.minute,
-                        expression: "time.to.minute"
-                      }
-                    ],
-                    staticClass: "time",
-                    attrs: { type: "text" },
-                    domProps: { value: _vm.time.to.minute },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.time.to, "minute", $event.target.value)
-                      }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("br"),
+                      })
+                    ])
+                  ]),
                   _vm._v(" "),
                   _vm.imageData.length > 0
                     ? _c("div", [
                         _c("img", {
-                          attrs: { width: "200px", src: _vm.imageData }
+                          staticClass: "preview-image",
+                          attrs: { src: _vm.imageData }
                         })
                       ])
-                    : _vm._e(),
+                    : _c("div", { staticClass: "empty-space-no-preview" }),
                   _vm._v(" "),
                   _c("input", {
                     ref: "fileToUpload",
@@ -30023,7 +30069,7 @@ var render = function() {
                   _c("i", [_vm._v(_vm._s(_vm.task.title))])
                 ]),
                 _vm._v(" "),
-                _c("div", { staticClass: "form-group" }, [
+                _c("div", { staticClass: "form-group blue-container" }, [
                   _c("input", {
                     directives: [
                       {
@@ -30070,58 +30116,20 @@ var render = function() {
                   _vm._v(" "),
                   _c("br"),
                   _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.date.from.day,
-                          expression: "date.from.day"
-                        }
-                      ],
-                      on: {
-                        change: function($event) {
-                          var $$selectedVal = Array.prototype.filter
-                            .call($event.target.options, function(o) {
-                              return o.selected
-                            })
-                            .map(function(o) {
-                              var val = "_value" in o ? o._value : o.value
-                              return val
-                            })
-                          _vm.$set(
-                            _vm.date.from,
-                            "day",
-                            $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          )
-                        }
-                      }
-                    },
-                    _vm._l(_vm.days, function(day) {
-                      return _c("option", { domProps: { value: day } }, [
-                        _vm._v(_vm._s(day))
-                      ])
-                    })
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.date.from.month,
-                          expression: "date.from.month"
-                        }
-                      ],
-                      on: {
-                        change: [
-                          function($event) {
+                  _c("div", { staticClass: "datepicker" }, [
+                    _c(
+                      "select",
+                      {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.date.from.day,
+                            expression: "date.from.day"
+                          }
+                        ],
+                        on: {
+                          change: function($event) {
                             var $$selectedVal = Array.prototype.filter
                               .call($event.target.options, function(o) {
                                 return o.selected
@@ -30132,159 +30140,159 @@ var render = function() {
                               })
                             _vm.$set(
                               _vm.date.from,
-                              "month",
+                              "day",
                               $event.target.multiple
                                 ? $$selectedVal
                                 : $$selectedVal[0]
                             )
-                          },
-                          _vm.changeMonth
-                        ]
-                      }
-                    },
-                    _vm._l(_vm.months, function(month) {
-                      return _c("option", { domProps: { value: month.id } }, [
-                        _vm._v(_vm._s(month.name))
-                      ])
-                    })
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.date.from.year,
-                          expression: "date.from.year"
+                          }
                         }
-                      ],
-                      on: {
-                        change: function($event) {
-                          var $$selectedVal = Array.prototype.filter
-                            .call($event.target.options, function(o) {
-                              return o.selected
-                            })
-                            .map(function(o) {
-                              var val = "_value" in o ? o._value : o.value
-                              return val
-                            })
-                          _vm.$set(
-                            _vm.date.from,
-                            "year",
-                            $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          )
-                        }
-                      }
-                    },
-                    _vm._l(_vm.years, function(year) {
-                      return _c("option", { domProps: { value: year } }, [
-                        _vm._v(_vm._s(year))
-                      ])
-                    })
-                  ),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
+                      },
+                      _vm._l(_vm.days, function(day) {
+                        return _c("option", { domProps: { value: day } }, [
+                          _vm._v(_vm._s(day))
+                        ])
+                      })
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "select",
                       {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.time.from.hour,
-                        expression: "time.from.hour"
-                      }
-                    ],
-                    staticClass: "time",
-                    attrs: { type: "text" },
-                    domProps: { value: _vm.time.from.hour },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.date.from.month,
+                            expression: "date.from.month"
+                          }
+                        ],
+                        on: {
+                          change: [
+                            function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.$set(
+                                _vm.date.from,
+                                "month",
+                                $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              )
+                            },
+                            _vm.changeMonth
+                          ]
                         }
-                        _vm.$set(_vm.time.from, "hour", $event.target.value)
-                      }
-                    }
-                  }),
-                  _vm._v(" :\n                        "),
-                  _c("input", {
-                    directives: [
+                      },
+                      _vm._l(_vm.months, function(month) {
+                        return _c("option", { domProps: { value: month.id } }, [
+                          _vm._v(_vm._s(month.name))
+                        ])
+                      })
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "select",
                       {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.time.from.minute,
-                        expression: "time.from.minute"
-                      }
-                    ],
-                    staticClass: "time",
-                    attrs: { type: "text" },
-                    domProps: { value: _vm.time.from.minute },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.date.from.year,
+                            expression: "date.from.year"
+                          }
+                        ],
+                        on: {
+                          change: function($event) {
+                            var $$selectedVal = Array.prototype.filter
+                              .call($event.target.options, function(o) {
+                                return o.selected
+                              })
+                              .map(function(o) {
+                                var val = "_value" in o ? o._value : o.value
+                                return val
+                              })
+                            _vm.$set(
+                              _vm.date.from,
+                              "year",
+                              $event.target.multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
+                            )
+                          }
                         }
-                        _vm.$set(_vm.time.from, "minute", $event.target.value)
-                      }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("br"),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
+                      },
+                      _vm._l(_vm.years, function(year) {
+                        return _c("option", { domProps: { value: year } }, [
+                          _vm._v(_vm._s(year))
+                        ])
+                      })
+                    ),
+                    _vm._v(" "),
+                    _c("input", {
                       directives: [
                         {
                           name: "model",
                           rawName: "v-model",
-                          value: _vm.date.to.day,
-                          expression: "date.to.day"
+                          value: _vm.time.from.hour,
+                          expression: "time.from.hour"
                         }
                       ],
+                      staticClass: "time",
+                      attrs: { type: "text" },
+                      domProps: { value: _vm.time.from.hour },
                       on: {
-                        change: function($event) {
-                          var $$selectedVal = Array.prototype.filter
-                            .call($event.target.options, function(o) {
-                              return o.selected
-                            })
-                            .map(function(o) {
-                              var val = "_value" in o ? o._value : o.value
-                              return val
-                            })
-                          _vm.$set(
-                            _vm.date.to,
-                            "day",
-                            $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          )
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(_vm.time.from, "hour", $event.target.value)
                         }
                       }
-                    },
-                    _vm._l(_vm.days, function(day) {
-                      return _c("option", { domProps: { value: day } }, [
-                        _vm._v(_vm._s(day))
-                      ])
+                    }),
+                    _vm._v(" :\n                            "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.time.from.minute,
+                          expression: "time.from.minute"
+                        }
+                      ],
+                      staticClass: "time",
+                      attrs: { type: "text" },
+                      domProps: { value: _vm.time.from.minute },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(_vm.time.from, "minute", $event.target.value)
+                        }
+                      }
                     })
-                  ),
+                  ]),
                   _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.date.to.month,
-                          expression: "date.to.month"
-                        }
-                      ],
-                      on: {
-                        change: [
-                          function($event) {
+                  _c("div", { staticClass: "datepicker" }, [
+                    _c(
+                      "select",
+                      {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.date.to.day,
+                            expression: "date.to.day"
+                          }
+                        ],
+                        on: {
+                          change: function($event) {
                             var $$selectedVal = Array.prototype.filter
                               .call($event.target.options, function(o) {
                                 return o.selected
@@ -30295,106 +30303,144 @@ var render = function() {
                               })
                             _vm.$set(
                               _vm.date.to,
-                              "month",
+                              "day",
                               $event.target.multiple
                                 ? $$selectedVal
                                 : $$selectedVal[0]
                             )
-                          },
-                          _vm.changeMonth
-                        ]
-                      }
-                    },
-                    _vm._l(_vm.months, function(month) {
-                      return _c("option", { domProps: { value: month.id } }, [
-                        _vm._v(_vm._s(month.name))
-                      ])
-                    })
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
+                          }
+                        }
+                      },
+                      _vm._l(_vm.days, function(day) {
+                        return _c("option", { domProps: { value: day } }, [
+                          _vm._v(_vm._s(day))
+                        ])
+                      })
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "select",
+                      {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.date.to.month,
+                            expression: "date.to.month"
+                          }
+                        ],
+                        on: {
+                          change: [
+                            function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.$set(
+                                _vm.date.to,
+                                "month",
+                                $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              )
+                            },
+                            _vm.changeMonth
+                          ]
+                        }
+                      },
+                      _vm._l(_vm.months, function(month) {
+                        return _c("option", { domProps: { value: month.id } }, [
+                          _vm._v(_vm._s(month.name))
+                        ])
+                      })
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "select",
+                      {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.date.to.year,
+                            expression: "date.to.year"
+                          }
+                        ],
+                        on: {
+                          change: function($event) {
+                            var $$selectedVal = Array.prototype.filter
+                              .call($event.target.options, function(o) {
+                                return o.selected
+                              })
+                              .map(function(o) {
+                                var val = "_value" in o ? o._value : o.value
+                                return val
+                              })
+                            _vm.$set(
+                              _vm.date.to,
+                              "year",
+                              $event.target.multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
+                            )
+                          }
+                        }
+                      },
+                      _vm._l(_vm.years, function(year) {
+                        return _c("option", { domProps: { value: year } }, [
+                          _vm._v(_vm._s(year))
+                        ])
+                      })
+                    ),
+                    _vm._v(" "),
+                    _c("input", {
                       directives: [
                         {
                           name: "model",
                           rawName: "v-model",
-                          value: _vm.date.to.year,
-                          expression: "date.to.year"
+                          value: _vm.time.to.hour,
+                          expression: "time.to.hour"
                         }
                       ],
+                      staticClass: "time",
+                      attrs: { type: "text" },
+                      domProps: { value: _vm.time.to.hour },
                       on: {
-                        change: function($event) {
-                          var $$selectedVal = Array.prototype.filter
-                            .call($event.target.options, function(o) {
-                              return o.selected
-                            })
-                            .map(function(o) {
-                              var val = "_value" in o ? o._value : o.value
-                              return val
-                            })
-                          _vm.$set(
-                            _vm.date.to,
-                            "year",
-                            $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          )
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(_vm.time.to, "hour", $event.target.value)
                         }
                       }
-                    },
-                    _vm._l(_vm.years, function(year) {
-                      return _c("option", { domProps: { value: year } }, [
-                        _vm._v(_vm._s(year))
-                      ])
+                    }),
+                    _vm._v(" :\n                            "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.time.to.minute,
+                          expression: "time.to.minute"
+                        }
+                      ],
+                      staticClass: "time",
+                      attrs: { type: "text" },
+                      domProps: { value: _vm.time.to.minute },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(_vm.time.to, "minute", $event.target.value)
+                        }
+                      }
                     })
-                  ),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.time.to.hour,
-                        expression: "time.to.hour"
-                      }
-                    ],
-                    staticClass: "time",
-                    attrs: { type: "text" },
-                    domProps: { value: _vm.time.to.hour },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.time.to, "hour", $event.target.value)
-                      }
-                    }
-                  }),
-                  _vm._v(" :\n                        "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.time.to.minute,
-                        expression: "time.to.minute"
-                      }
-                    ],
-                    staticClass: "time",
-                    attrs: { type: "text" },
-                    domProps: { value: _vm.time.to.minute },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.time.to, "minute", $event.target.value)
-                      }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("br"),
+                  ]),
                   _vm._v(" "),
                   _vm.task.attachment
                     ? _c("h5", [
@@ -30413,16 +30459,12 @@ var render = function() {
                     ? _c("div", [
                         _vm.task.attachment && _vm.isImage
                           ? _c("img", {
-                              attrs: {
-                                width: "200px",
-                                src: _vm.task.attachment
-                              }
+                              staticClass: "preview-image",
+                              attrs: { src: _vm.task.attachment }
                             })
                           : _c("img", {
-                              attrs: {
-                                width: "200px",
-                                src: "storage/No_Image_Available.png"
-                              }
+                              staticClass: "preview-image",
+                              attrs: { src: "storage/No_image_available.png" }
                             })
                       ])
                     : _vm._e(),
@@ -30430,7 +30472,8 @@ var render = function() {
                   _vm.imageData.length > 0
                     ? _c("div", [
                         _c("img", {
-                          attrs: { width: "200px", src: _vm.imageData }
+                          staticClass: "preview-image",
+                          attrs: { src: _vm.imageData }
                         })
                       ])
                     : _vm._e(),

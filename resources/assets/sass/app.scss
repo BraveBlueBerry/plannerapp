@@ -19,13 +19,38 @@
     padding-left: 50px;
 }
 
+h2 {
+    margin-left:15px;
+}
+
 .time {
     width: 25px;
     padding-left: 3px;
 }
+
+.time-container {
+    margin-left:10px;
+    max-width:100px;
+    margin-top:5px;
+}
+
+.date-container {
+    margin-top:5px;
+}
+
+.empty-space-no-preview {
+    margin-top:115px;
+}
+
+.preview-image {
+    height: 100px;
+    margin-bottom:15px;
+}
+
 #tasks-list {
     list-style-type:none;
 }
+
 .blue-container {
     background-color:#e0f1f9;
     margin:5px;
@@ -41,4 +66,8 @@
 
 .btn {
     max-height:29px;
+}
+
+.datepicker {
+    margin-bottom:10px;
 }

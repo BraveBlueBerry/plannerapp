@@ -29,33 +29,46 @@
                             <textarea class="form-control" v-model="task.description" placeholder="Description"></textarea>
                             <br />
                             <!-- Datepicker -->
-                            <select v-model="date.from.day">
-                                <option v-bind:value="day" v-for="day in days">{{ day }}</option>
-                            </select>
-                            <select v-model="date.from.month" v-on:change="changeMonth">
-                                <option v-bind:value="month.id" v-for="month in months">{{ month.name }}</option>
-                            </select>
-                            <select v-model="date.from.year">
-                                <option v-bind:value="year" v-for="year in years">{{ year }}</option>
-                            </select>
-                            <input class="time" type="text" v-model="time.from.hour" /> :
-                            <input class="time" type="text" v-model="time.from.minute" />
-                            <br />
-                            <select v-model="date.to.day">
-                                <option v-bind:value="day" v-for="day in days">{{ day }}</option>
-                            </select>
-                            <select v-model="date.to.month" v-on:change="changeMonth">
-                                <option v-bind:value="month.id" v-for="month in months">{{ month.name }}</option>
-                            </select>
-                            <select v-model="date.to.year">
-                                <option v-bind:value="year" v-for="year in years">{{ year }}</option>
-                            </select>
-                            <input class="time" type="text" v-model="time.to.hour" /> :
-                            <input class="time" type="text" v-model="time.to.minute" />
+                            <div class="datepicker row">
+                                <div class="date-container col-auto">
+                                    <select v-model="date.from.day">
+                                        <option v-bind:value="day" v-for="day in days">{{ day }}</option>
+                                    </select>
+                                    <select v-model="date.from.month" v-on:change="changeMonth">
+                                        <option v-bind:value="month.id" v-for="month in months">{{ month.name }}</option>
+                                    </select>
+                                    <select v-model="date.from.year">
+                                        <option v-bind:value="year" v-for="year in years">{{ year }}</option>
+                                    </select>
+                                </div>
+                                <div class="time-container col">
+                                    <input class="time" type="text" v-model="time.from.hour" /> :
+                                    <input class="time" type="text" v-model="time.from.minute" />
+                                </div>
+                            </div>
+                            <div class="datepicker row">
+                                <div class="date-container col-auto">
+                                    <select v-model="date.to.day">
+                                        <option v-bind:value="day" v-for="day in days">{{ day }}</option>
+                                    </select>
+                                    <select v-model="date.to.month" v-on:change="changeMonth">
+                                        <option v-bind:value="month.id" v-for="month in months">{{ month.name }}</option>
+                                    </select>
+                                    <select v-model="date.to.year">
+                                        <option v-bind:value="year" v-for="year in years">{{ year }}</option>
+                                    </select>
+                                </div>
+                                <div class="time-container col">
+                                    <input class="time" type="text" v-model="time.to.hour" /> :
+                                    <input class="time" type="text" v-model="time.to.minute" />
+                                </div>
+                            </div>
                             <!-- End Datepicker-->
-                            <br />
+
                             <div v-if="imageData.length > 0">
-                                <img width="200px" :src=imageData />
+                                <img class="preview-image" :src=imageData />
+                            </div>
+                            <div v-else class="empty-space-no-preview">
                             </div>
                             <input type="file" class="form-control" ref="fileToUpload" v-on:change="previewFile" />
                             <br />
@@ -65,45 +78,46 @@
                     <!-- Show if the user has selected a task to edit or show -->
                     <div class="editing" v-if="edit">
                         <h2>Edit task: <i>{{ task.title }}</i></h2>
-                        <div class="form-group">
+                        <div class="form-group blue-container">
                             <input class="form-control" v-model="task.title" />
                             <br />
                             <textarea class="form-control" v-model="task.description"></textarea>
                             <br />
                             <!-- Datepicker -->
-                            <select v-model="date.from.day">
-                                <option v-bind:value="day" v-for="day in days">{{ day }}</option>
-                            </select>
-                            <select v-model="date.from.month" v-on:change="changeMonth">
-                                <option v-bind:value="month.id" v-for="month in months">{{ month.name }}</option>
-                            </select>
-                            <select v-model="date.from.year">
-                                <option v-bind:value="year" v-for="year in years">{{ year }}</option>
-                            </select>
-                            <input class="time" type="text" v-model="time.from.hour" /> :
-                            <input class="time" type="text" v-model="time.from.minute" />
-                            <br />
-                            <select v-model="date.to.day">
-                                <option v-bind:value="day" v-for="day in days">{{ day }}</option>
-                            </select>
-                            <select v-model="date.to.month" v-on:change="changeMonth">
-                                <option v-bind:value="month.id" v-for="month in months">{{ month.name }}</option>
-                            </select>
-                            <select v-model="date.to.year">
-                                <option v-bind:value="year" v-for="year in years">{{ year }}</option>
-                            </select>
-                            <input class="time" type="text" v-model="time.to.hour" /> :
-                            <input class="time" type="text" v-model="time.to.minute" />
+                            <div class="datepicker">
+                                <select v-model="date.from.day">
+                                    <option v-bind:value="day" v-for="day in days">{{ day }}</option>
+                                </select>
+                                <select v-model="date.from.month" v-on:change="changeMonth">
+                                    <option v-bind:value="month.id" v-for="month in months">{{ month.name }}</option>
+                                </select>
+                                <select v-model="date.from.year">
+                                    <option v-bind:value="year" v-for="year in years">{{ year }}</option>
+                                </select>
+                                <input class="time" type="text" v-model="time.from.hour" /> :
+                                <input class="time" type="text" v-model="time.from.minute" />
+                            </div>
+                            <div class="datepicker">
+                                <select v-model="date.to.day">
+                                    <option v-bind:value="day" v-for="day in days">{{ day }}</option>
+                                </select>
+                                <select v-model="date.to.month" v-on:change="changeMonth">
+                                    <option v-bind:value="month.id" v-for="month in months">{{ month.name }}</option>
+                                </select>
+                                <select v-model="date.to.year">
+                                    <option v-bind:value="year" v-for="year in years">{{ year }}</option>
+                                </select>
+                                <input class="time" type="text" v-model="time.to.hour" /> :
+                                <input class="time" type="text" v-model="time.to.minute" />
+                            </div>
                             <!-- End Datepicker-->
-                            <br />
-                            <!-- <span class="downloadLink" @click="downloadAttachment"></span> -->
                             <h5 v-if="task.attachment"><b>Download:</b><a :href="task.attachment" download>{{ attachmentName }}</a></h5>
                             <div v-if="imageData.length == 0">
-                                <img v-if="task.attachment && isImage" width="200px" :src=task.attachment />
-                                <img v-else width="200px" src="storage/No_Image_Available.png"  />
+                                <img class="preview-image" v-if="task.attachment && isImage" :src=task.attachment />
+                                <img v-else class="preview-image" src="storage/No_image_available.png"  />
                             </div>
                             <div v-if="imageData.length > 0">
-                                <img width="200px" :src=imageData />
+                                <img class="preview-image" :src=imageData />
                             </div>
                             <input type="file" class="form-control" ref="fileToUpload" v-on:change="previewFile" />
                             <br />
