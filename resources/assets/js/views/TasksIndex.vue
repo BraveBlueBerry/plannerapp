@@ -251,9 +251,12 @@
                     this.date.from.month = this.date.to.month = this.months[d.getMonth()].id;
                     this.date.from.year = this.date.to.year = d.getFullYear();
                     this.time.from.hour = d.getHours();
-                    this.time.from.minute = d.getMinutes();
+                    if(d.getMinutes() < 10) {
+                        this.time.from.minute = this.time.to.minute = "0" + d.getMinutes();
+                    } else {
+                        this.time.from.minute = this.time.to.minute = d.getMinutes();
+                    }
                     this.time.to.hour = d.getHours() + 1;
-                    this.time.to.minute = d.getMinutes();
                     this.changeMonth();
                     this.fillYears();
                 }
@@ -314,6 +317,18 @@
 
             // Close the task and show the create new task
             hideTask() {
+                let d = new Date();
+                this.date.from.day = this.date.to.day = d.getDate();
+                this.date.from.month = this.date.to.month = this.months[d.getMonth()].id;
+                this.date.from.year = this.date.to.year = d.getFullYear();
+                this.time.from.hour = d.getHours();
+                console.log(d.getMinutes());
+                if(d.getMinutes() < 10) {
+                    this.time.from.minute = this.time.to.minute = "0" + d.getMinutes();
+                } else {
+                    this.time.from.minute = this.time.to.minute = d.getMinutes();
+                }
+                this.time.to.hour = d.getHours() + 1;
                 this.saveInfo = '';
                 this.edit = false;
                 this.task = {
