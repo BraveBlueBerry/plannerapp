@@ -84,31 +84,39 @@
                             <textarea class="form-control" v-model="task.description"></textarea>
                             <br />
                             <!-- Datepicker -->
-                            <div class="datepicker">
-                                <select v-model="date.from.day">
-                                    <option v-bind:value="day" v-for="day in days">{{ day }}</option>
-                                </select>
-                                <select v-model="date.from.month" v-on:change="changeMonth">
-                                    <option v-bind:value="month.id" v-for="month in months">{{ month.name }}</option>
-                                </select>
-                                <select v-model="date.from.year">
-                                    <option v-bind:value="year" v-for="year in years">{{ year }}</option>
-                                </select>
-                                <input class="time" type="text" v-model="time.from.hour" /> :
-                                <input class="time" type="text" v-model="time.from.minute" />
+                            <div class="datepicker row">
+                                <div class="date-container col-auto">
+                                    <select v-model="date.from.day">
+                                        <option v-bind:value="day" v-for="day in days">{{ day }}</option>
+                                    </select>
+                                    <select v-model="date.from.month" v-on:change="changeMonth">
+                                        <option v-bind:value="month.id" v-for="month in months">{{ month.name }}</option>
+                                    </select>
+                                    <select v-model="date.from.year">
+                                        <option v-bind:value="year" v-for="year in years">{{ year }}</option>
+                                    </select>
+                                </div>
+                                <div class="time-container col">
+                                    <input class="time" type="text" v-model="time.from.hour" /> :
+                                    <input class="time" type="text" v-model="time.from.minute" />
+                                </div>
                             </div>
-                            <div class="datepicker">
-                                <select v-model="date.to.day">
-                                    <option v-bind:value="day" v-for="day in days">{{ day }}</option>
-                                </select>
-                                <select v-model="date.to.month" v-on:change="changeMonth">
-                                    <option v-bind:value="month.id" v-for="month in months">{{ month.name }}</option>
-                                </select>
-                                <select v-model="date.to.year">
-                                    <option v-bind:value="year" v-for="year in years">{{ year }}</option>
-                                </select>
-                                <input class="time" type="text" v-model="time.to.hour" /> :
-                                <input class="time" type="text" v-model="time.to.minute" />
+                            <div class="datepicker row">
+                                <div class="date-container col-auto">
+                                    <select v-model="date.to.day">
+                                        <option v-bind:value="day" v-for="day in days">{{ day }}</option>
+                                    </select>
+                                    <select v-model="date.to.month" v-on:change="changeMonth">
+                                        <option v-bind:value="month.id" v-for="month in months">{{ month.name }}</option>
+                                    </select>
+                                    <select v-model="date.to.year">
+                                        <option v-bind:value="year" v-for="year in years">{{ year }}</option>
+                                    </select>
+                                </div>
+                                <div class="time-container col">
+                                    <input class="time" type="text" v-model="time.to.hour" /> :
+                                    <input class="time" type="text" v-model="time.to.minute" />
+                                </div>
                             </div>
                             <!-- End Datepicker-->
                             <h5 v-if="task.attachment"><b>Download:</b><a :href="task.attachment" download>{{ attachmentName }}</a></h5>
