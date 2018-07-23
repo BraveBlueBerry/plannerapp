@@ -521,7 +521,7 @@
                         reader.readAsDataURL(input.files[0]);
                     }
                 } else {
-                    this.imageData = "storage/No_Image_Available.png";
+                    this.imageData = "storage/No_image_available.png";
                 }
             },
 
