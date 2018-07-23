@@ -10428,3 +10428,24 @@ a.text-dark:focus {
   padding-left: 3px;
 }
 
+#tasks-list {
+  list-style-type: none;
+}
+
+.blue-container {
+  background-color: #e0f1f9;
+  margin: 5px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.task-buttons {
+  margin-top: 10px;
+  margin-bottom: 6px;
+}
+
+.btn {
+  max-height: 29px;
+}
+

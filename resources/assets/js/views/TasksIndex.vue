@@ -4,12 +4,18 @@
             <div class="row">
                 <div class="col-md-5 media" style="width: 100%">
                     <!-- Show if there are tasks in the array -->
-                    <ul v-if="tasks" class="media-body">
+                    <ul v-if="tasks">
                         <button type="button" class="btn btn-link">List</button> | <button type="button" class="btn btn-link">Calendar</button>
-                        <li v-for="task in tasks">
-                            <strong>Title: </strong>{{ task.title }} |
-                            <button class="btn btn-sm btn-outline-primary ml-3" @click="showTask(task.id)">Edit</button> |
-                            <button class="btn btn-sm btn-outline-danger ml-3" @click="deleteTask(task.id, task.title)">Delete</button>
+                        <li id="tasks-list" v-for="task in tasks">
+                            <div class="blue-container row">
+                                <div class="task-title col-10">
+                                    {{ task.title }}
+                                </div>
+                                <div class="task-buttons">
+                                    <button class="btn btn-sm btn-outline-primary ml-3" @click="showTask(task.id)">Edit</button>
+                                    <button class="btn btn-sm btn-outline-danger ml-3" @click="deleteTask(task.id, task.title)">Delete</button>
+                                </div>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -17,7 +23,7 @@
                     <!-- Show if the user has no task selected to edit or show -->
                     <div class="newTask" v-if="!edit">
                         <h2>Create a new task</h2>
-                        <div class="form-group">
+                        <div class="form-group blue-container">
                             <input class="form-control" v-model="task.title" placeholder="Title" />
                             <br />
                             <textarea class="form-control" v-model="task.description" placeholder="Description"></textarea>

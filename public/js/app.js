@@ -28260,6 +28260,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
@@ -29529,7 +29535,6 @@ var render = function() {
             _vm.tasks
               ? _c(
                   "ul",
-                  { staticClass: "media-body" },
                   [
                     _c(
                       "button",
@@ -29550,36 +29555,46 @@ var render = function() {
                     ),
                     _vm._v(" "),
                     _vm._l(_vm.tasks, function(task) {
-                      return _c("li", [
-                        _c("strong", [_vm._v("Title: ")]),
-                        _vm._v(
-                          _vm._s(task.title) + " |\n                        "
-                        ),
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-sm btn-outline-primary ml-3",
-                            on: {
-                              click: function($event) {
-                                _vm.showTask(task.id)
-                              }
-                            }
-                          },
-                          [_vm._v("Edit")]
-                        ),
-                        _vm._v(" |\n                        "),
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-sm btn-outline-danger ml-3",
-                            on: {
-                              click: function($event) {
-                                _vm.deleteTask(task.id, task.title)
-                              }
-                            }
-                          },
-                          [_vm._v("Delete")]
-                        )
+                      return _c("li", { attrs: { id: "tasks-list" } }, [
+                        _c("div", { staticClass: "blue-container row" }, [
+                          _c("div", { staticClass: "task-title col-10" }, [
+                            _vm._v(
+                              "\n                                " +
+                                _vm._s(task.title) +
+                                "\n                            "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "task-buttons" }, [
+                            _c(
+                              "button",
+                              {
+                                staticClass:
+                                  "btn btn-sm btn-outline-primary ml-3",
+                                on: {
+                                  click: function($event) {
+                                    _vm.showTask(task.id)
+                                  }
+                                }
+                              },
+                              [_vm._v("Edit")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "button",
+                              {
+                                staticClass:
+                                  "btn btn-sm btn-outline-danger ml-3",
+                                on: {
+                                  click: function($event) {
+                                    _vm.deleteTask(task.id, task.title)
+                                  }
+                                }
+                              },
+                              [_vm._v("Delete")]
+                            )
+                          ])
+                        ])
                       ])
                     })
                   ],
@@ -29594,7 +29609,7 @@ var render = function() {
             ? _c("div", { staticClass: "newTask" }, [
                 _c("h2", [_vm._v("Create a new task")]),
                 _vm._v(" "),
-                _c("div", { staticClass: "form-group" }, [
+                _c("div", { staticClass: "form-group blue-container" }, [
                   _c("input", {
                     directives: [
                       {
